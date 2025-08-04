@@ -21,19 +21,6 @@
 - **Docker Ready**: Easy deployment with Docker and docker-compose
 - **Type Safety**: Full parameter validation and type checking
 
-## 📁 Project Structure
-```
-MoodlewareAPI/
-├── config.json          # All endpoint definitions
-├── main.py              # Dynamic FastAPI app generator
-├── requirements.txt     # Dependencies
-├── Dockerfile           # Docker container definition
-├── compose.yaml         # Docker orchestration
-├── .dockerignore        # Docker ignore file
-├── .env.example         # Environment variables template
-└── README.md            # This file
-```
-
 ## 📦 Installation
 
 ### Using Docker (Recommended)
@@ -90,7 +77,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 
 # Run the application
-python main.py
+python asgi.py
 ```
 The API will be available at [http://localhost:8000](http://localhost:8000).
 
