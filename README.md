@@ -7,7 +7,7 @@
   Built with FastAPI and Docker.
 </p>
 <p align="center">
-  <a href="https://github.com/MyDrift-user/MoodlewareAPI"><img src="https://badgetrack.pianonic.ch/badge?tag=moodleware-api&label=visits&color=3644b7&style=flat" alt="visits" </a>
+  <a href="https://github.com/MyDrift-user/MoodlewareAPI"><img src="https://badgetrack.pianonic.ch/badge?tag=moodleware-api&label=visits&color=3644b7&style=flat" alt="visits"/></a>
   <a href="https://github.com/MyDrift-user/MoodlewareAPI/blob/main/LICENSE"><img src="https://img.shields.io/github/license/MyDrift-user/MoodlewareAPI?color=3644b7&label=License"/></a>
   <a href="https://github.com/MyDrift-user/MoodlewareAPI/releases"><img src="https://img.shields.io/github/v/release/MyDrift-user/MoodlewareAPI?include_prereleases&color=3644b7&label=Latest%20Release"/></a>
   <a href="#-installation"><img src="https://img.shields.io/badge/Selfhost-Instructions-3644b7.svg"/></a>
