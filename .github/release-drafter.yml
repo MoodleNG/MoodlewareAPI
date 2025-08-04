@@ -1,4 +1,5 @@
-tag-prefix: ''
+name-template: 'v$RESOLVED_VERSION'
+
 categories:
   - title: '🚀 Features'
     labels:
@@ -29,54 +30,14 @@ categories:
     labels:
       - 'api'
       - 'breaking-change'
+
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+
+no-changes-template: 'No changes in this release.'
+
 template: |
-  ## Changes
+  ## What's Changed
 
   $CHANGES
 
-change-title-escapes: '\<*_&"'''
-autolabeler:
-  - label: 'documentation'
-    files:
-      - '*.md'
-      - 'docs/**/*'
-    branch:
-      - '/docs{0,1}\/.+/'
-  - label: 'bug'
-    branch:
-      - '/fix\/.+/'
-      - '/bugfix\/.+/'
-    title:
-      - '/fix/i'
-      - '/bug/i'
-  - label: 'enhancement'
-    branch:
-      - '/feature\/.+/'
-      - '/enhancement\/.+/'
-  - label: 'docker'
-    files:
-      - 'Dockerfile'
-      - 'compose.yaml'
-      - '.dockerignore'
-  - label: 'config'
-    files:
-      - 'config.json'
-      - 'requirements.txt'
-  - label: 'api'
-    files:
-      - 'main.py'
-    branch:
-      - '/api\/.+/'
-  - label: 'security'
-    branch:
-      - '/security\/.+/'
-replacers:
-  - search: /"/g
-    replace: ''
-  - search: /'/g
-    replace: ''
-exclude-labels:
-  - 'skip-changelog'
-
-filter-by-commitish: true
+  **Full Changelog**: https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION

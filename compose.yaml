@@ -1,13 +1,9 @@
+# This compose file is meant for development purposes.
+
 services:
   moodle-api:
-    build: .
     container_name: MoodlewareAPI
+    build: .
     ports:
       - "8000:8000"
     restart: unless-stopped
-    networks:
-      - moodle-network
-
-networks:
-  moodle-network:
-    driver: bridge
