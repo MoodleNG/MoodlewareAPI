@@ -248,7 +248,3 @@ for endpoint_config in config["endpoints"]:
         tags=endpoint_config["tags"],
         summary=endpoint_config["description"]
     )
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
