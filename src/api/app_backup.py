@@ -1,14 +1,12 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field, create_model
-from typing import Dict, Any, List, Optional, Union
-import httpx
 import json
-from datetime import datetime
 from pathlib import Path
+from ..application.services.moodle_service import MoodleService
+from ..application.utils import MoodleResponse, create_param_model
 
 # Load configuration
-config_path = Path(__file__).parent / "config.json"
+config_path = Path(__file__).parent.parent.parent / "config.json"
 with open(config_path, 'r') as f:
     config = json.load(f)
 
@@ -29,11 +27,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Base models
-class MoodleCredentials(BaseModel):
-    moodle_url: str = Field(..., description="Moodle site URL")
-    token: str = Field(..., description="Moodle API token")
 
 class MoodleResponse(BaseModel):
     success: bool
