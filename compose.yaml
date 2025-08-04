@@ -1,14 +1,9 @@
-version: '3.8'
-
 services:
   moodle-api:
     build: .
     container_name: MoodlewareAPI
     ports:
       - "8000:8000"
-    volumes:
-      # Mount config for easy updates without rebuild
-      - ./config.json:/app/config.json:ro
     restart: unless-stopped
     networks:
       - moodle-network

@@ -16,7 +16,7 @@ moodleapi/
 ├── main.py              # Dynamic FastAPI app generator
 ├── requirements.txt     # Dependencies
 ├── Dockerfile           # Docker container definition
-├── docker-compose.yml   # Docker orchestration
+├── compose.yaml   # Docker orchestration
 ├── .dockerignore        # Docker ignore file
 ├── .env.example         # Environment variables template
 └── README.md            # This file
