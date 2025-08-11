@@ -7,5 +7,5 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - MOODLE_URL=http://moodle.bbbaden.ch
+      - MOODLE_URL=http://moodle.school.edu
     restart: unless-stopped
