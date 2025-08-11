@@ -1,439 +1,733 @@
 {
-  "endpoints": [
+  "/login/token.php": [
     {
-      "path": "/get-token",
-      "method": "POST",
+      "path": "/auth",
+      "method": "GET",
       "function": "auth",
-      "name": "get_moodle_token",
-      "description": "Get Moodle token for API calls",
+      "description": "Get Moodle token for API calls.",
       "tags": ["Authentication"],
-      "params": [
-        {"name": "moodle_url", "type": "str", "required": true, "description": "Moodle site URL"},
-        {"name": "username", "type": "str", "required": true, "description": "Moodle username"},
-        {"name": "password", "type": "str", "required": true, "description": "Moodle password"},
-        {"name": "service", "type": "str", "required": false, "default": "moodle_mobile_app", "description": "Web service name"}
-      ]
-    },
+      "query_params": [
+        {
+          "name": "username",
+          "type": "str",
+          "required": true,
+          "description": "Moodle username"
+        },
+        {
+          "name": "password",
+          "type": "str",
+          "required": true,
+          "description": "Moodle password"
+        },
+        {
+          "name": "service",
+          "type": "str",
+          "required": false,
+          "default": "moodle_mobile_app",
+          "description": "Web service name"
+        }
+      ],
+      "responses": {
+        "200": {
+          "token": "string",
+          "privatetoken": "string"
+        }
+      }
+    }
+  ],
+  "/webservice/rest/server.php": [
     {
-      "path": "/core/webservice/get-site-info",
-      "method": "POST", 
+      "path": "/core_webservice_get_site_info",
+      "method": "GET",
       "function": "core_webservice_get_site_info",
-      "name": "get_site_info",
-      "description": "Get Moodle site information",
+      "description": "Get Moodle site information & user information",
       "tags": ["Core"],
-      "params": []
+      "query_params": []
     },
+
     {
-      "path": "/core/course/get-contents",
-      "method": "POST",
-      "function": "core_course_get_contents", 
-      "name": "get_course_contents",
+      "path": "/core_course_get_contents",
+      "method": "GET",
+      "function": "core_course_get_contents",
       "description": "Get course contents (sections and activities)",
       "tags": ["Courses"],
-      "params": [
-        {"name": "courseid", "type": "int", "required": true, "description": "Course ID"},
-        {"name": "exclude_modules", "type": "bool", "required": false, "default": false, "description": "Exclude modules from response"},
-        {"name": "exclude_contents", "type": "bool", "required": false, "default": false, "description": "Exclude file contents from response"}
+      "query_params": [
+        {
+          "name": "courseid",
+          "type": "int",
+          "required": true,
+          "description": "Course ID"
+        },
+        {
+          "name": "exclude_modules",
+          "type": "bool",
+          "required": false,
+          "default": false,
+          "description": "Exclude modules from response"
+        },
+        {
+          "name": "exclude_contents",
+          "type": "bool",
+          "required": false,
+          "default": false,
+          "description": "Exclude file contents from response"
+        }
       ]
     },
+
     {
-      "path": "/core/course/get-courses-by-field",
-      "method": "POST",
-      "function": "core_course_get_courses_by_field",
-      "name": "get_courses_by_field",
-      "description": "Get courses by field (id, shortname, fullname, etc.)",
-      "tags": ["Courses"],
-      "params": [
-        {"name": "field", "type": "str", "required": true, "description": "Field to search by"},
-        {"name": "value", "type": "str", "required": true, "description": "Value to search for"}
-      ]
-    },
-    {
-      "path": "/core/enrol/get-users-courses",
-      "method": "POST",
-      "function": "core_enrol_get_users_courses",
-      "name": "get_user_courses",
-      "description": "Get courses the user is enrolled in", 
-      "tags": ["Enrollment"],
-      "params": [
-        {"name": "userid", "type": "int", "required": false, "default": 0, "description": "User ID (0 for current user)"}
-      ]
-    },
-    {
-      "path": "/core/enrol/get-enrolled-users",
-      "method": "POST", 
-      "function": "core_enrol_get_enrolled_users",
-      "name": "get_enrolled_users",
-      "description": "Get users enrolled in a course",
-      "tags": ["Enrollment"],
-      "params": [
-        {"name": "courseid", "type": "int", "required": true, "description": "Course ID"}
-      ]
-    },
-    {
-      "path": "/core/user/get-users-by-field",
-      "method": "POST",
-      "function": "core_user_get_users_by_field", 
-      "name": "get_users_by_field",
-      "description": "Get users by field (id, username, email, etc.)",
-      "tags": ["Users"],
-      "params": [
-        {"name": "field", "type": "str", "required": true, "description": "Field to search by"},
-        {"name": "values", "type": "list", "required": true, "description": "Values to search for"}
-      ]
-    },
-    {
-      "path": "/mod/assign/get-assignments",
-      "method": "POST",
-      "function": "mod_assign_get_assignments",
-      "name": "get_assignments",
-      "description": "Get assignments from specified courses",
-      "tags": ["Assignments"],
-      "params": [
-        {"name": "courseids", "type": "list", "required": true, "description": "List of course IDs"}
-      ]
-    },
-    {
-      "path": "/core/grades/get-grades",
-      "method": "POST",
-      "function": "core_grades_get_grades",
-      "name": "get_grades", 
-      "description": "Get grades for a course",
-      "tags": ["Grades"],
-      "params": [
-        {"name": "courseid", "type": "int", "required": true, "description": "Course ID"},
-        {"name": "userid", "type": "int", "required": false, "description": "User ID (optional)"}
-      ]
-    },
-    {
-      "path": "/mod/forum/get-forums-by-courses", 
-      "method": "POST",
-      "function": "mod_forum_get_forums_by_courses",
-      "name": "get_forums_by_courses",
-      "description": "Get forums in specified courses",
-      "tags": ["Forums"],
-      "params": [
-        {"name": "courseids", "type": "list", "required": true, "description": "List of course IDs"}
-      ]
-    },
-    {
-      "path": "/mod/quiz/get-quizzes-by-courses",
-      "method": "POST", 
-      "function": "mod_quiz_get_quizzes_by_courses",
-      "name": "get_quizzes_by_courses",
-      "description": "Get quizzes in specified courses",
-      "tags": ["Quizzes"],
-      "params": [
-        {"name": "courseids", "type": "list", "required": true, "description": "List of course IDs"}
-      ]
-    },
-    {
-      "path": "/core/calendar/get-calendar-events",
-      "method": "POST",
-      "function": "core_calendar_get_calendar_events",
-      "name": "get_calendar_events", 
-      "description": "Get calendar events",
-      "tags": ["Calendar"],
-      "params": [
-        {"name": "courseid", "type": "int", "required": false, "description": "Course ID (optional)"}
-      ]
-    },
-    {
-      "path": "/core/message/get-contacts",
-      "method": "POST",
-      "function": "core_message_get_contacts",
-      "name": "get_message_contacts",
-      "description": "Get message contacts", 
-      "tags": ["Messages"],
-      "params": []
-    },
-    {
-      "path": "/core/files/get-files",
-      "method": "POST",
-      "function": "core_files_get_files",
-      "name": "get_files",
-      "description": "Get files from specified context",
-      "tags": ["Files"],
-      "params": [
-        {"name": "contextid", "type": "int", "required": true, "description": "Context ID"},
-        {"name": "component", "type": "str", "required": true, "description": "Component name"},
-        {"name": "filearea", "type": "str", "required": true, "description": "File area"},
-        {"name": "itemid", "type": "int", "required": false, "default": 0, "description": "Item ID"},
-        {"name": "filepath", "type": "str", "required": false, "default": "/", "description": "File path"},
-        {"name": "filename", "type": "str", "required": false, "default": "", "description": "File name"}
-      ]
-    },
-    {
-      "path": "/core/course/search-courses",
-      "method": "POST",
+      "path": "/core_course_search_courses",
+      "method": "GET",
       "function": "core_course_search_courses",
-      "name": "search_courses",
       "description": "Search courses by criteria",
       "tags": ["Courses"],
-      "params": [
-        {"name": "criterianame", "type": "str", "required": false, "default": "search", "description": "Search criteria name"},
-        {"name": "criteriavalue", "type": "str", "required": true, "description": "Search term"},
-        {"name": "page", "type": "int", "required": false, "default": 0, "description": "Page number"},
-        {"name": "perpage", "type": "int", "required": false, "default": 100, "description": "Number of results per page"},
-        {"name": "limittoenrolled", "type": "int", "required": false, "default": 0, "description": "Limit to enrolled courses only"}
+      "query_params": [
+        {
+          "name": "criterianame",
+          "type": "str",
+          "required": false,
+          "default": "search",
+          "description": "Search criteria name"
+        },
+        {
+          "name": "criteriavalue",
+          "type": "str",
+          "required": true,
+          "description": "Search term"
+        },
+        {
+          "name": "page",
+          "type": "int",
+          "required": false,
+          "default": 0,
+          "description": "Page number"
+        },
+        {
+          "name": "perpage",
+          "type": "int",
+          "required": false,
+          "default": 100,
+          "description": "Number of results per page"
+        },
+        {
+          "name": "limittoenrolled",
+          "type": "int",
+          "required": false,
+          "default": 0,
+          "description": "Limit to enrolled courses only"
+        }
       ]
     },
+
     {
-      "path": "/enrol/self/enrol-user",
-      "method": "POST",
-      "function": "enrol_self_enrol_user",
-      "name": "self_enrol_user",
-      "description": "Self-enrol user in a course",
+      "path": "/core_course_get_courses_by_field",
+      "method": "GET",
+      "function": "core_course_get_courses_by_field",
+      "description": "Get courses by field (id, shortname, fullname, etc.)",
+      "tags": ["Courses"],
+      "query_params": [
+        {
+          "name": "field",
+          "type": "str",
+          "required": true,
+          "description": "Field to search by"
+        },
+        {
+          "name": "value",
+          "type": "str",
+          "required": true,
+          "description": "Value to search for"
+        }
+      ]
+    },
+
+    {
+      "path": "/core_enrol_get_enrolled_users",
+      "method": "GET",
+      "function": "core_enrol_get_enrolled_users",
+      "description": "Get users enrolled in a course",
       "tags": ["Enrollment"],
-      "params": [
-        {"name": "courseid", "type": "int", "required": true, "description": "Course ID"},
-        {"name": "password", "type": "str", "required": false, "description": "Enrolment password if required"},
-        {"name": "instanceid", "type": "int", "required": false, "description": "Enrolment instance ID"}
+      "query_params": [
+        {
+          "name": "courseid",
+          "type": "int",
+          "required": true,
+          "description": "Course ID"
+        }
       ]
     },
+
     {
-      "path": "/core/user/get-course-user-profiles",
-      "method": "POST",
-      "function": "core_user_get_course_user_profiles",
-      "name": "get_course_user_profiles",
-      "description": "Get user profiles for users in a course",
-      "tags": ["Users"],
-      "params": [
-        {"name": "courseid", "type": "int", "required": true, "description": "Course ID"}
+      "path": "/core_enrol_get_users_courses",
+      "method": "GET",
+      "function": "core_enrol_get_users_courses",
+      "description": "Get courses the user is enrolled in",
+      "tags": ["Enrollment"],
+      "query_params": [
+        {
+          "name": "userid",
+          "type": "int",
+          "required": false,
+          "default": 0,
+          "description": "User ID (0 for current user)"
+        }
       ]
     },
+
     {
-      "path": "/core/user/get-user-preferences",
-      "method": "POST",
-      "function": "core_user_get_user_preferences",
-      "name": "get_user_preferences",
-      "description": "Get user preferences",
-      "tags": ["Users"],
-      "params": [
-        {"name": "userid", "type": "int", "required": false, "description": "User ID (optional)"},
-        {"name": "name", "type": "str", "required": false, "description": "Preference name"}
+      "path": "/core_files_get_files",
+      "method": "GET",
+      "function": "core_files_get_files",
+      "description": "Get files from specified context",
+      "tags": ["Files"],
+      "query_params": [
+        {
+          "name": "contextid",
+          "type": "int",
+          "required": true,
+          "description": "Context ID"
+        },
+        {
+          "name": "component",
+          "type": "str",
+          "required": true,
+          "description": "Component name"
+        },
+        {
+          "name": "filearea",
+          "type": "str",
+          "required": true,
+          "description": "File area"
+        },
+        {
+          "name": "itemid",
+          "type": "int",
+          "required": false,
+          "default": 0,
+          "description": "Item ID"
+        },
+        {
+          "name": "filepath",
+          "type": "str",
+          "required": false,
+          "default": "/",
+          "description": "File path"
+        },
+        {
+          "name": "filename",
+          "type": "str",
+          "required": false,
+          "default": "",
+          "description": "File name"
+        }
       ]
     },
+
     {
-      "path": "/mod/assign/get-submissions",
-      "method": "POST",
-      "function": "mod_assign_get_submissions",
-      "name": "get_assignment_submissions",
-      "description": "Get assignment submissions",
-      "tags": ["Assignments"],
-      "params": [
-        {"name": "assignmentids", "type": "list", "required": true, "description": "Assignment IDs"}
-      ]
-    },
-    {
-      "path": "/mod/assign/get-submission-status",
-      "method": "POST",
-      "function": "mod_assign_get_submission_status",
-      "name": "get_assignment_submission_status",
-      "description": "Get assignment submission status",
-      "tags": ["Assignments"],
-      "params": [
-        {"name": "assignid", "type": "int", "required": true, "description": "Assignment ID"},
-        {"name": "userid", "type": "int", "required": false, "description": "User ID (optional)"}
-      ]
-    },
-    {
-      "path": "/gradereport/user/get-grade-items",
-      "method": "POST",
-      "function": "gradereport_user_get_grade_items",
-      "name": "get_grade_items",
-      "description": "Get grade items for a course",
-      "tags": ["Grades"],
-      "params": [
-        {"name": "courseid", "type": "int", "required": true, "description": "Course ID"},
-        {"name": "userid", "type": "int", "required": false, "default": 0, "description": "User ID"}
-      ]
-    },
-    {
-      "path": "/core/grades/get-grade-definitions",
-      "method": "POST",
-      "function": "core_grades_get_gradedefinitions",
-      "name": "get_grade_definitions_simple",
-      "description": "Get grade definitions including grade types, scales, and outcomes",
-      "tags": ["Grades"],
-      "params": []
-    },
-    {
-      "path": "/core/grading/get-definitions",
-      "method": "POST",
-      "function": "core_grading_get_definitions",
-      "name": "get_grading_definitions",
-      "description": "Get grading definitions for specific activities",
-      "tags": ["Grades"],
-      "params": [
-        {"name": "cmids", "type": "list", "required": true, "description": "Course module IDs"},
-        {"name": "areaname", "type": "str", "required": false, "default": "submission", "description": "Grading area name"}
-      ]
-    },
-    {
-      "path": "/mod/forum/get-forum-discussions",
-      "method": "POST",
-      "function": "mod_forum_get_forum_discussions",
-      "name": "get_forum_discussions",
-      "description": "Get discussions in a forum",
-      "tags": ["Forums"],
-      "params": [
-        {"name": "forumid", "type": "int", "required": true, "description": "Forum ID"}
-      ]
-    },
-    {
-      "path": "/mod/quiz/get-user-attempts",
-      "method": "POST",
-      "function": "mod_quiz_get_user_attempts",
-      "name": "get_quiz_attempts",
-      "description": "Get quiz attempts",
-      "tags": ["Quizzes"],
-      "params": [
-        {"name": "quizid", "type": "int", "required": true, "description": "Quiz ID"},
-        {"name": "userid", "type": "int", "required": false, "description": "User ID (optional)"}
-      ]
-    },
-    {
-      "path": "/mod/quiz/get-quiz-access-information",
-      "method": "POST",
-      "function": "mod_quiz_get_quiz_access_information",
-      "name": "get_quiz_access_information",
-      "description": "Get quiz access information",
-      "tags": ["Quizzes"],
-      "params": [
-        {"name": "quizid", "type": "int", "required": true, "description": "Quiz ID"}
-      ]
-    },
-    {
-      "path": "/mod/quiz/start-attempt",
-      "method": "POST",
-      "function": "mod_quiz_start_attempt",
-      "name": "start_quiz_attempt",
-      "description": "Start a new quiz attempt",
-      "tags": ["Quizzes"],
-      "params": [
-        {"name": "quizid", "type": "int", "required": true, "description": "Quiz ID"},
-        {"name": "preflightdata", "type": "list", "required": false, "default": [], "description": "Pre-flight check data"},
-        {"name": "forcenew", "type": "bool", "required": false, "default": false, "description": "Force new attempt"}
-      ]
-    },
-    {
-      "path": "/mod/quiz/get-attempt-data",
-      "method": "POST",
-      "function": "mod_quiz_get_attempt_data",
-      "name": "get_quiz_attempt_data",
-      "description": "Get quiz attempt data including questions",
-      "tags": ["Quizzes"],
-      "params": [
-        {"name": "attemptid", "type": "int", "required": true, "description": "Attempt ID"},
-        {"name": "page", "type": "int", "required": false, "default": 0, "description": "Page number (-1 for all pages)"},
-        {"name": "preflightdata", "type": "list", "required": false, "default": [], "description": "Pre-flight check data"}
-      ]
-    },
-    {
-      "path": "/mod/quiz/save-attempt",
-      "method": "POST",
-      "function": "mod_quiz_save_attempt",
-      "name": "save_quiz_attempt",
-      "description": "Save quiz attempt responses",
-      "tags": ["Quizzes"],
-      "params": [
-        {"name": "attemptid", "type": "int", "required": true, "description": "Attempt ID"},
-        {"name": "data", "type": "list", "required": true, "description": "Question responses data"},
-        {"name": "preflightdata", "type": "list", "required": false, "default": [], "description": "Pre-flight check data"}
-      ]
-    },
-    {
-      "path": "/mod/quiz/process-attempt",
-      "method": "POST",
-      "function": "mod_quiz_process_attempt",
-      "name": "process_quiz_attempt",
-      "description": "Process and optionally finish a quiz attempt",
-      "tags": ["Quizzes"],
-      "params": [
-        {"name": "attemptid", "type": "int", "required": true, "description": "Attempt ID"},
-        {"name": "data", "type": "list", "required": false, "default": [], "description": "Question responses data"},
-        {"name": "finishattempt", "type": "bool", "required": false, "default": false, "description": "Finish the attempt"},
-        {"name": "timeup", "type": "bool", "required": false, "default": false, "description": "Time is up"},
-        {"name": "preflightdata", "type": "list", "required": false, "default": [], "description": "Pre-flight check data"}
-      ]
-    },
-    {
-      "path": "/mod/quiz/get-attempt-summary",
-      "method": "POST",
-      "function": "mod_quiz_get_attempt_summary",
-      "name": "get_quiz_attempt_summary",
-      "description": "Get quiz attempt summary",
-      "tags": ["Quizzes"],
-      "params": [
-        {"name": "attemptid", "type": "int", "required": true, "description": "Attempt ID"},
-        {"name": "preflightdata", "type": "list", "required": false, "default": [], "description": "Pre-flight check data"}
-      ]
-    },
-    {
-      "path": "/core/calendar/get-action-events-by-course",
-      "method": "POST",
-      "function": "core_calendar_get_action_events_by_course",
-      "name": "get_action_events_by_course",
-      "description": "Get action events (assignments, quizzes) by course",
-      "tags": ["Calendar"],
-      "params": [
-        {"name": "courseid", "type": "int", "required": true, "description": "Course ID"},
-        {"name": "timesortfrom", "type": "int", "required": false, "description": "Time sort from (timestamp)"},
-        {"name": "timesortto", "type": "int", "required": false, "description": "Time sort to (timestamp)"},
-        {"name": "aftereventid", "type": "int", "required": false, "description": "After event ID"},
-        {"name": "limitnum", "type": "int", "required": false, "default": 20, "description": "Number of events to return"}
-      ]
-    },
-    {
-      "path": "/core/message/get-messages",
-      "method": "POST",
+      "path": "/core_message_get_messages",
+      "method": "GET",
       "function": "core_message_get_messages",
-      "name": "get_messages",
       "description": "Get messages",
       "tags": ["Messages"],
-      "params": [
-        {"name": "useridto", "type": "int", "required": true, "description": "User ID to (recipient)"},
-        {"name": "useridfrom", "type": "int", "required": false, "description": "User ID from (sender)"},
-        {"name": "type", "type": "str", "required": false, "default": "both", "description": "Message type (sent, received, both)"},
-        {"name": "read", "type": "bool", "required": false, "description": "Read status"},
-        {"name": "newestfirst", "type": "bool", "required": false, "default": true, "description": "Sort newest first"},
-        {"name": "limitfrom", "type": "int", "required": false, "default": 0, "description": "Limit from"},
-        {"name": "limitnum", "type": "int", "required": false, "default": 100, "description": "Number of messages"}
+      "query_params": [
+        {
+          "name": "useridto",
+          "type": "int",
+          "required": true,
+          "description": "User ID to (recipient)"
+        },
+        {
+          "name": "useridfrom",
+          "type": "int",
+          "required": false,
+          "description": "User ID from (sender)"
+        },
+        {
+          "name": "type",
+          "type": "str",
+          "required": false,
+          "default": "both",
+          "description": "Message type (sent, received, both)"
+        },
+        {
+          "name": "read",
+          "type": "bool",
+          "required": false,
+          "description": "Read status"
+        },
+        {
+          "name": "newestfirst",
+          "type": "bool",
+          "required": false,
+          "default": true,
+          "description": "Sort newest first"
+        },
+        {
+          "name": "limitfrom",
+          "type": "int",
+          "required": false,
+          "default": 0,
+          "description": "Limit from"
+        },
+        {
+          "name": "limitnum",
+          "type": "int",
+          "required": false,
+          "default": 100,
+          "description": "Number of messages"
+        }
       ]
     },
+
     {
-      "path": "/tool/lp/get-user-competencies-in-course",
-      "method": "POST",
-      "function": "tool_lp_get_user_competencies_in_course",
-      "name": "get_user_competencies_in_course",
-      "description": "Get user competencies in a course",
-      "tags": ["Competencies"],
-      "params": [
-        {"name": "courseid", "type": "int", "required": true, "description": "Course ID"}
+      "path": "/core_user_get_course_user_profiles",
+      "method": "GET",
+      "function": "core_user_get_course_user_profiles",
+      "description": "Get user profiles for users in a course",
+      "tags": ["Users"],
+      "query_params": [
+        {
+          "name": "courseid",
+          "type": "int",
+          "required": true,
+          "description": "Course ID"
+        }
       ]
     },
+
     {
-      "path": "/tool/lp/get-learning-plans",
-      "method": "POST",
-      "function": "tool_lp_get_learning_plans",
-      "name": "get_learning_plans",
-      "description": "Get user learning plans",
-      "tags": ["Competencies"],
-      "params": [
-        {"name": "userid", "type": "int", "required": true, "description": "User ID"}
+      "path": "/core_user_get_users_by_field",
+      "method": "GET",
+      "function": "core_user_get_users_by_field",
+      "description": "Get users by field (id, username, email, etc.)",
+      "tags": ["Users"],
+      "query_params": [
+        {
+          "name": "field",
+          "type": "str",
+          "required": true,
+          "description": "Field to search by"
+        },
+        {
+          "name": "values",
+          "type": "list",
+          "required": true,
+          "description": "Values to search for"
+        }
       ]
     },
+
     {
-      "path": "/call",
-      "method": "POST", 
-      "function": "universal",
-      "name": "call_any_function",
-      "description": "Call any Moodle web service function with custom parameters",
-      "tags": ["Universal"],
-      "params": [
-        {"name": "function_name", "type": "str", "required": true, "description": "Moodle web service function name"},
-        {"name": "parameters", "type": "dict", "required": false, "default": {}, "description": "Function parameters as key-value pairs"}
+      "path": "/core_user_get_user_preferences",
+      "method": "GET",
+      "function": "core_user_get_user_preferences",
+      "description": "Get user preferences",
+      "tags": ["Users"],
+      "query_params": [
+        {
+          "name": "userid",
+          "type": "int",
+          "required": false,
+          "description": "User ID (optional)"
+        },
+        {
+          "name": "name",
+          "type": "str",
+          "required": false,
+          "description": "Preference name"
+        }
+      ]
+    },
+
+    {
+      "path": "/enrol_self_enrol_user",
+      "method": "GET",
+      "function": "enrol_self_enrol_user",
+      "description": "Self-enrol user in a course | unenrol by using function on enrolled course",
+      "tags": ["Enrollment"],
+      "query_params": [
+        {
+          "name": "courseid",
+          "type": "int",
+          "required": true,
+          "description": "Course ID"
+        }
+      ]
+    },
+
+    {
+      "path": "/gradereport_user_get_grade_items",
+      "method": "GET",
+      "function": "gradereport_user_get_grade_items",
+      "description": "Get grade items for a course",
+      "tags": ["Grades"],
+      "query_params": [
+        {
+          "name": "courseid",
+          "type": "int",
+          "required": true,
+          "description": "Course ID"
+        },
+        {
+          "name": "userid",
+          "type": "int",
+          "required": false,
+          "default": 0,
+          "description": "User ID"
+        }
+      ]
+    },
+
+    {
+      "path": "/mod_assign_get_assignments",
+      "method": "GET",
+      "function": "mod_assign_get_assignments",
+      "description": "Get assignments from specified courses",
+      "tags": ["Assignments"],
+      "query_params": [
+        {
+          "name": "courseids",
+          "type": "list",
+          "required": true,
+          "description": "List of course IDs"
+        }
+      ]
+    },
+
+    {
+      "path": "/mod_assign_get_submissions",
+      "method": "GET",
+      "function": "mod_assign_get_submissions",
+      "description": "Get assignment submissions",
+      "tags": ["Assignments"],
+      "query_params": [
+        {
+          "name": "assignmentids",
+          "type": "list",
+          "required": true,
+          "description": "Assignment IDs"
+        }
+      ]
+    },
+
+    {
+      "path": "/mod_assign_get_submission_status",
+      "method": "GET",
+      "function": "mod_assign_get_submission_status",
+      "description": "Get assignment submission status",
+      "tags": ["Assignments"],
+      "query_params": [
+        {
+          "name": "assignid",
+          "type": "int",
+          "required": true,
+          "description": "Assignment ID"
+        },
+        {
+          "name": "userid",
+          "type": "int",
+          "required": false,
+          "description": "User ID (optional)"
+        }
+      ]
+    },
+
+    {
+      "path": "/mod_forum_get_forums_by_courses",
+      "method": "GET",
+      "function": "mod_forum_get_forums_by_courses",
+      "description": "Get forums in specified courses",
+      "tags": ["Forums"],
+      "query_params": [
+        {
+          "name": "courseids",
+          "type": "list",
+          "required": true,
+          "description": "List of course IDs"
+        }
+      ]
+    },
+
+    {
+      "path": "/mod_forum_get_forum_discussions",
+      "method": "GET",
+      "function": "mod_forum_get_forum_discussions",
+      "description": "Get discussions in a forum",
+      "tags": ["Forums"],
+      "query_params": [
+        {
+          "name": "forumid",
+          "type": "int",
+          "required": true,
+          "description": "Forum ID"
+        }
+      ]
+    },
+
+    {
+      "path": "/core_calendar_get_calendar_events",
+      "method": "GET",
+      "function": "core_calendar_get_calendar_events",
+      "description": "Get calendar events",
+      "tags": ["Calendar"],
+      "query_params": [
+        {
+          "name": "courseid",
+          "type": "int",
+          "required": false,
+          "description": "Course ID (optional)"
+        }
+      ]
+    },
+
+    {
+      "path": "/core_calendar_get_action_events_by_course",
+      "method": "GET",
+      "function": "core_calendar_get_action_events_by_course",
+      "description": "Get action events (assignments, quizzes) by course",
+      "tags": ["Calendar"],
+      "query_params": [
+        {
+          "name": "courseid",
+          "type": "int",
+          "required": true,
+          "description": "Course ID"
+        },
+        {
+          "name": "timesortfrom",
+          "type": "int",
+          "required": false,
+          "description": "Time sort from (timestamp)"
+        },
+        {
+          "name": "timesortto",
+          "type": "int",
+          "required": false,
+          "description": "Time sort to (timestamp)"
+        },
+        {
+          "name": "aftereventid",
+          "type": "int",
+          "required": false,
+          "description": "After event ID"
+        },
+        {
+          "name": "limitnum",
+          "type": "int",
+          "required": false,
+          "default": 20,
+          "description": "Number of events to return"
+        }
+      ]
+    },
+
+    {
+      "path": "/mod_quiz_get_quizzes_by_courses",
+      "method": "GET",
+      "function": "mod_quiz_get_quizzes_by_courses",
+      "description": "Get quizzes in specified courses",
+      "tags": ["Quizzes"],
+      "query_params": [
+        {
+          "name": "courseids",
+          "type": "list",
+          "required": true,
+          "description": "List of course IDs"
+        }
+      ]
+    },
+
+    {
+      "path": "/mod_quiz_get_quiz_access_information",
+      "method": "GET",
+      "function": "mod_quiz_get_quiz_access_information",
+      "description": "Get quiz access information",
+      "tags": ["Quizzes"],
+      "query_params": [
+        {
+          "name": "quizid",
+          "type": "int",
+          "required": true,
+          "description": "Quiz ID"
+        }
+      ]
+    },
+
+    {
+      "path": "/mod_quiz_get_attempt_data",
+      "method": "GET",
+      "function": "mod_quiz_get_attempt_data",
+      "description": "Get quiz attempt data including questions",
+      "tags": ["Quizzes"],
+      "query_params": [
+        {
+          "name": "attemptid",
+          "type": "int",
+          "required": true,
+          "description": "Attempt ID"
+        },
+        {
+          "name": "page",
+          "type": "int",
+          "required": false,
+          "default": 0,
+          "description": "Page number (-1 for all pages)"
+        },
+        {
+          "name": "preflightdata",
+          "type": "list",
+          "required": false,
+          "default": [],
+          "description": "Pre-flight check data"
+        }
+      ]
+    },
+
+    {
+      "path": "/mod_quiz_get_attempt_summary",
+      "method": "GET",
+      "function": "mod_quiz_get_attempt_summary",
+      "description": "Get quiz attempt summary",
+      "tags": ["Quizzes"],
+      "query_params": [
+        {
+          "name": "attemptid",
+          "type": "int",
+          "required": true,
+          "description": "Attempt ID"
+        },
+        {
+          "name": "preflightdata",
+          "type": "list",
+          "required": false,
+          "default": [],
+          "description": "Pre-flight check data"
+        }
+      ]
+    },
+
+    {
+      "path": "/mod_quiz_get_user_attempts",
+      "method": "GET",
+      "function": "mod_quiz_get_user_attempts",
+      "description": "Get quiz attempts",
+      "tags": ["Quizzes"],
+      "query_params": [
+        {
+          "name": "quizid",
+          "type": "int",
+          "required": true,
+          "description": "Quiz ID"
+        },
+        {
+          "name": "userid",
+          "type": "int",
+          "required": false,
+          "description": "User ID (optional)"
+        }
+      ]
+    },
+
+    {
+      "path": "/mod_quiz_process_attempt",
+      "method": "GET",
+      "function": "mod_quiz_process_attempt",
+      "description": "Process and optionally finish a quiz attempt",
+      "tags": ["Quizzes"],
+      "query_params": [
+        {
+          "name": "attemptid",
+          "type": "int",
+          "required": true,
+          "description": "Attempt ID"
+        },
+        {
+          "name": "data",
+          "type": "list",
+          "required": false,
+          "default": [],
+          "description": "Question responses data"
+        },
+        {
+          "name": "finishattempt",
+          "type": "bool",
+          "required": false,
+          "default": false,
+          "description": "Finish the attempt"
+        },
+        {
+          "name": "timeup",
+          "type": "bool",
+          "required": false,
+          "default": false,
+          "description": "Time is up"
+        },
+        {
+          "name": "preflightdata",
+          "type": "list",
+          "required": false,
+          "default": [],
+          "description": "Pre-flight check data"
+        }
+      ]
+    },
+
+    {
+      "path": "/mod_quiz_save_attempt",
+      "method": "GET",
+      "function": "mod_quiz_save_attempt",
+      "description": "Save quiz attempt responses",
+      "tags": ["Quizzes"],
+      "query_params": [
+        {
+          "name": "attemptid",
+          "type": "int",
+          "required": true,
+          "description": "Attempt ID"
+        },
+        {
+          "name": "data",
+          "type": "list",
+          "required": true,
+          "description": "Question responses data"
+        },
+        {
+          "name": "preflightdata",
+          "type": "list",
+          "required": false,
+          "default": [],
+          "description": "Pre-flight check data"
+        }
+      ]
+    },
+
+    {
+      "path": "/mod_quiz_start_attempt",
+      "method": "GET",
+      "function": "mod_quiz_start_attempt",
+      "description": "Start a new quiz attempt",
+      "tags": ["Quizzes"],
+      "query_params": [
+        {
+          "name": "quizid",
+          "type": "int",
+          "required": true,
+          "description": "Quiz ID"
+        },
+        {
+          "name": "preflightdata",
+          "type": "list",
+          "required": false,
+          "default": [],
+          "description": "Pre-flight check data"
+        },
+        {
+          "name": "forcenew",
+          "type": "bool",
+          "required": false,
+          "default": false,
+          "description": "Force new attempt"
+        }
       ]
     }
   ]

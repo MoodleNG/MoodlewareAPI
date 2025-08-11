@@ -3,6 +3,9 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+# Response files
+exresponses/
+
 # C extensions
 *.so
 
