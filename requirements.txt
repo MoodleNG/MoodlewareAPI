@@ -1,5 +1,6 @@
-fastapi==0.116.1
-httpx>=0.25.0
-pydantic>=2.4.0
-uvicorn==0.35.0
-colorlog==6.9.0
+fastapi
+httpx
+pydantic
+uvicorn
+colorlog
+python-dotenv
