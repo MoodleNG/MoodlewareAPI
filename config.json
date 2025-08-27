@@ -11,13 +11,13 @@
           "name": "username",
           "type": "str",
           "required": true,
-          "description": "Moodle username"
+          "description": "Moodle instance username"
         },
         {
           "name": "password",
           "type": "str",
           "required": true,
-          "description": "Moodle password"
+          "description": "Moodle instance password"
         },
         {
           "name": "service",
@@ -29,8 +29,46 @@
       ],
       "responses": {
         "200": {
-          "token": "string",
-          "privatetoken": "string"
+          "description": "Token response",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": { "type": "string" },
+                  "privatetoken": { "type": "string" }
+                }
+              },
+              "example": {
+                "token": "abcdef1234567890",
+                "privatetoken": "abcdef1234567890_priv"
+              }
+            }
+          }
+        },
+        "422": {
+          "description": "Invalid Credentials",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "error": { "type": "string" },
+                  "errorcode": { "type": "string" },
+                  "stacktrace": { "type": ["string", "null"] },
+                  "debuginfo": { "type": ["string", "null"] },
+                  "reproductionlink": { "type": ["string", "null"] }
+                }
+              },
+              "example": {
+                "error": "Invalid login",
+                "errorcode": "invalidlogin",
+                "stacktrace": null,
+                "debuginfo": null,
+                "reproductionlink": null
+              }
+            }
+          }
         }
       }
     }
@@ -42,7 +80,89 @@
       "function": "core_webservice_get_site_info",
       "description": "Get Moodle site information & user information",
       "tags": ["Core"],
-      "query_params": []
+      "query_params": [],
+      "responses": {
+        "200": {
+          "description": "Site and user information",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sitename": { "type": "string" },
+                  "username": { "type": "string" },
+                  "firstname": { "type": "string" },
+                  "lastname": { "type": "string" },
+                  "fullname": { "type": "string" },
+                  "lang": { "type": "string" },
+                  "userid": { "type": "integer" },
+                  "siteurl": { "type": "string" },
+                  "userpictureurl": { "type": "string" },
+                  "usercanmanageownfiles": { "type": "boolean" },
+                  "userquota": { "type": "integer" },
+                  "usermaxuploadfilesize": { "type": "integer" },
+                  "userhomepage": { "type": "integer" },
+                  "userprivateaccesskey": { "type": "string" },
+                  "siteid": { "type": "integer" },
+                  "sitecalendartype": { "type": "string" },
+                  "usercalendartype": { "type": "string" },
+                  "userissiteadmin": { "type": "boolean" },
+                  "theme": { "type": "string" },
+                  "limitconcurrentlogins": { "type": "integer" },
+                  "policyagreed": { "type": "integer" }
+                }
+              },
+              "example": {
+                "sitename": "School XYZ",
+                "username": "jdoe",
+                "firstname": "John",
+                "lastname": "Doe",
+                "fullname": "John Doe",
+                "lang": "en",
+                "userid": 42,
+                "siteurl": "https://moodle.example.com",
+                "userpictureurl": "https://moodle.example.com/theme/image.php/boost/core/1690000000/u/f1",
+                "usercanmanageownfiles": true,
+                "userquota": 104857600,
+                "usermaxuploadfilesize": 10485760,
+                "userhomepage": 0,
+                "userprivateaccesskey": "abcdef1234567890key",
+                "siteid": 1,
+                "sitecalendartype": "gregorian",
+                "usercalendartype": "gregorian",
+                "userissiteadmin": false,
+                "theme": "boost",
+                "limitconcurrentlogins": 1,
+                "policyagreed": 1
+              }
+            }
+          }
+        },
+        "422": {
+          "description": "Invalid Request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "error": { "type": "string" },
+                  "errorcode": { "type": "string" },
+                  "stacktrace": { "type": ["string", "null"] },
+                  "debuginfo": { "type": ["string", "null"] },
+                  "reproductionlink": { "type": ["string", "null"] }
+                }
+              },
+              "example": {
+                "error": "Invalid parameter value detected",
+                "errorcode": "invalidparameter",
+                "stacktrace": null,
+                "debuginfo": null,
+                "reproductionlink": null
+              }
+            }
+          }
+        }
+      }
     },
 
     {
@@ -57,20 +177,6 @@
           "type": "int",
           "required": true,
           "description": "Course ID"
-        },
-        {
-          "name": "exclude_modules",
-          "type": "bool",
-          "required": false,
-          "default": false,
-          "description": "Exclude modules from response"
-        },
-        {
-          "name": "exclude_contents",
-          "type": "bool",
-          "required": false,
-          "default": false,
-          "description": "Exclude file contents from response"
         }
       ]
     },
