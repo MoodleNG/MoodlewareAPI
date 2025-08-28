@@ -1,10 +1,7 @@
-import os
-import json
-from pathlib import Path
 from fastapi import FastAPI
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
-from .utils import get_env_variable, load_config, create_handler
+from .utils import load_config, create_handler
 
 load_dotenv()
 

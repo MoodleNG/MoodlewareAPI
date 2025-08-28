@@ -3,14 +3,13 @@ import json
 from fastapi import Query, HTTPException, Response
 from typing import Optional
 import httpx
-from urllib.parse import urlencode
 
 def get_env_variable(var_name: str) -> str:
     """Return an environment variable or empty string if unset."""
     value = os.environ.get(var_name)
     if not value:
         print(f"Environment variable '{var_name}' not set or empty, please provide moodle_url parameters in the requests.")
-    return value
+    return value or ""
 
 
 def load_config(file_path: str) -> dict:
