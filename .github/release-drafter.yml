@@ -1,35 +1,19 @@
+# Release Drafter config for PianoNicsMusic
 name-template: 'v$RESOLVED_VERSION'
 
 categories:
   - title: '🚀 Features'
     labels:
       - 'feature'
+  - title: '✨ Enhancements'
+    labels:
       - 'enhancement'
+  - title: '🛠️ Refactors'
+    labels:
+      - 'refactor'
   - title: '🐛 Bug Fixes'
     labels:
-      - 'fix'
-      - 'bugfix'
       - 'bug'
-  - title: '📚 Documentation'
-    labels:
-      - 'documentation'
-      - 'docs'
-  - title: '🔒 Security'
-    labels:
-      - 'security'
-  - title: '🐳 Docker & Deployment'
-    labels:
-      - 'docker'
-      - 'deployment'
-      - 'infrastructure'
-  - title: '🔧 Configuration'
-    labels:
-      - 'config'
-      - 'configuration'
-  - title: '🔌 API Changes'
-    labels:
-      - 'api'
-      - 'breaking-change'
 
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 
