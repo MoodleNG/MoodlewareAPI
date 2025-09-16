@@ -5,7 +5,7 @@ services:
     container_name: MoodlewareAPI
     build: .
     ports:
-      - ${PORT-8000:8000}
+      - ${PORT-8000}:8000
     environment:
       - MOODLE_URL=${MOODLE_URL}
     restart: unless-stopped

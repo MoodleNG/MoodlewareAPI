@@ -640,7 +640,137 @@
           "required": true,
           "description": "List of course IDs"
         }
-      ]
+      ],
+      "responses": {
+        "200": {
+          "description": "List of quizzes for the given courses",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "quizzes": { "type": "array", "items": { "type": "object" } },
+                  "warnings": { "type": "array", "items": { "type": "object" } }
+                },
+                "required": ["quizzes"]
+              },
+              "example": {
+                "quizzes": [
+                  {
+                    "id": 1001,
+                    "coursemodule": 2001,
+                    "course": 42,
+                    "name": "Chemistry Homework Quiz",
+                    "intro": "<p>Please answer all questions.</p>",
+                    "introformat": 1,
+                    "introfiles": [],
+                    "section": 1,
+                    "visible": true,
+                    "groupmode": 0,
+                    "groupingid": 0,
+                    "lang": "en",
+                    "timeopen": 0,
+                    "timeclose": 0,
+                    "timelimit": 0,
+                    "overduehandling": "autoabandon",
+                    "graceperiod": 0,
+                    "preferredbehaviour": "deferredfeedback",
+                    "canredoquestions": 0,
+                    "attempts": 0,
+                    "attemptonlast": 0,
+                    "grademethod": 1,
+                    "decimalpoints": 2,
+                    "questiondecimalpoints": -1,
+                    "reviewattempt": 69904,
+                    "reviewcorrectness": 4368,
+                    "reviewmaxmarks": 69904,
+                    "reviewmarks": 4368,
+                    "reviewspecificfeedback": 4368,
+                    "reviewgeneralfeedback": 4368,
+                    "reviewrightanswer": 4368,
+                    "reviewoverallfeedback": 4368,
+                    "questionsperpage": 1,
+                    "navmethod": "free",
+                    "sumgrades": 5,
+                    "grade": 5,
+                    "browsersecurity": "-",
+                    "delay1": 0,
+                    "delay2": 0,
+                    "showuserpicture": 0,
+                    "showblocks": 0,
+                    "completionattemptsexhausted": 0,
+                    "completionpass": 0,
+                    "allowofflineattempts": 0,
+                    "autosaveperiod": 60,
+                    "hasfeedback": 0,
+                    "hasquestions": 1
+                  },
+                  {
+                    "id": 1002,
+                    "coursemodule": 2002,
+                    "course": 42,
+                    "name": "Math Practice Quiz",
+                    "intro": "<p>Practice questions for the exam.</p>",
+                    "introformat": 1,
+                    "introfiles": [],
+                    "section": 1,
+                    "visible": true,
+                    "groupmode": 0,
+                    "groupingid": 0,
+                    "lang": "en",
+                    "timeopen": 0,
+                    "timeclose": 0,
+                    "timelimit": 900,
+                    "preferredbehaviour": "deferredfeedback",
+                    "attempts": 2,
+                    "grademethod": 4,
+                    "decimalpoints": 2,
+                    "questiondecimalpoints": -1,
+                    "sumgrades": 4,
+                    "grade": 4,
+                    "hasfeedback": 0
+                  },
+                  {
+                    "id": 1003,
+                    "coursemodule": 2003,
+                    "course": 42,
+                    "name": "Biology Final Quiz",
+                    "intro": "<p>Final quiz for the course.</p>",
+                    "introformat": 1,
+                    "introfiles": [],
+                    "section": 2,
+                    "visible": true,
+                    "groupmode": 0,
+                    "groupingid": 0,
+                    "lang": "en",
+                    "timeopen": 1710000000,
+                    "timeclose": 1710600000,
+                    "timelimit": 2400,
+                    "preferredbehaviour": "immediatefeedback",
+                    "attempts": 1,
+                    "grademethod": 1,
+                    "decimalpoints": 2,
+                    "questiondecimalpoints": -1,
+                    "sumgrades": 10,
+                    "grade": 10,
+                    "hasfeedback": 0
+                  }
+                ],
+                "warnings": []
+              }
+            }
+          }
+        },
+        "422": {
+          "description": "Invalid Request",
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" },
+              "example": { "error": "invalidparameter", "errorcode": "invalidparameter" }
+            }
+          }
+        }
+      }
     },
 
     {
@@ -656,155 +786,67 @@
           "required": true,
           "description": "Quiz ID"
         }
-      ]
+      ],
+      "responses": {
+        "200": {
+          "description": "Quiz access info for current user",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "canattempt": {"type": "boolean"},
+                  "canmanage": {"type": "boolean"},
+                  "canpreview": {"type": "boolean"},
+                  "canreviewmyattempts": {"type": "boolean"},
+                  "canviewreports": {"type": "boolean"},
+                  "accessrules": {"type": "array", "items": {"type": "string"}},
+                  "activerulenames": {"type": "array", "items": {"type": "string"}},
+                  "preventaccessreasons": {"type": "array", "items": {"type": "string"}},
+                  "warnings": {"type": "array", "items": {"type": "object"}}
+                },
+                "required": ["canattempt", "accessrules", "warnings"]
+              },
+              "example": {
+                "canattempt": true,
+                "canmanage": false,
+                "canpreview": false,
+                "canreviewmyattempts": true,
+                "canviewreports": false,
+                "accessrules": [],
+                "activerulenames": ["quizaccess_openclosedate"],
+                "preventaccessreasons": [],
+                "warnings": []
+              }
+            }
+          }
+        }
+      }
     },
 
     {
-      "path": "/mod_quiz_get_attempt_data",
+      "path": "/mod_quiz_view_quiz",
       "method": "GET",
-      "function": "mod_quiz_get_attempt_data",
-      "description": "Get quiz attempt data including questions",
+      "function": "mod_quiz_view_quiz",
+      "description": "Log that a user viewed the quiz (for analytics).",
       "tags": ["Quizzes"],
       "query_params": [
-        {
-          "name": "attemptid",
-          "type": "int",
-          "required": true,
-          "description": "Attempt ID"
-        },
-        {
-          "name": "page",
-          "type": "int",
-          "required": false,
-          "default": 0,
-          "description": "Page number (-1 for all pages)"
-        },
-        {
-          "name": "preflightdata",
-          "type": "list",
-          "required": false,
-          "default": [],
-          "description": "Pre-flight check data"
+        { "name": "quizid", "type": "int", "required": true, "description": "Quiz ID" }
+      ],
+      "responses": {
+        "200": {
+          "description": "View logged",
+            "content": { 
+            "application/json": { 
+              "schema": { "type": "object" }, 
+              "example": { 
+              "status": true, 
+              "warnings": [] 
+              } 
+            } 
+            }
         }
-      ]
-    },
-
-    {
-      "path": "/mod_quiz_get_attempt_summary",
-      "method": "GET",
-      "function": "mod_quiz_get_attempt_summary",
-      "description": "Get quiz attempt summary",
-      "tags": ["Quizzes"],
-      "query_params": [
-        {
-          "name": "attemptid",
-          "type": "int",
-          "required": true,
-          "description": "Attempt ID"
-        },
-        {
-          "name": "preflightdata",
-          "type": "list",
-          "required": false,
-          "default": [],
-          "description": "Pre-flight check data"
-        }
-      ]
-    },
-
-    {
-      "path": "/mod_quiz_get_user_attempts",
-      "method": "GET",
-      "function": "mod_quiz_get_user_attempts",
-      "description": "Get quiz attempts",
-      "tags": ["Quizzes"],
-      "query_params": [
-        {
-          "name": "quizid",
-          "type": "int",
-          "required": true,
-          "description": "Quiz ID"
-        },
-        {
-          "name": "userid",
-          "type": "int",
-          "required": false,
-          "description": "User ID (optional)"
-        }
-      ]
-    },
-
-    {
-      "path": "/mod_quiz_process_attempt",
-      "method": "GET",
-      "function": "mod_quiz_process_attempt",
-      "description": "Process and optionally finish a quiz attempt",
-      "tags": ["Quizzes"],
-      "query_params": [
-        {
-          "name": "attemptid",
-          "type": "int",
-          "required": true,
-          "description": "Attempt ID"
-        },
-        {
-          "name": "data",
-          "type": "list",
-          "required": false,
-          "default": [],
-          "description": "Question responses data"
-        },
-        {
-          "name": "finishattempt",
-          "type": "bool",
-          "required": false,
-          "default": false,
-          "description": "Finish the attempt"
-        },
-        {
-          "name": "timeup",
-          "type": "bool",
-          "required": false,
-          "default": false,
-          "description": "Time is up"
-        },
-        {
-          "name": "preflightdata",
-          "type": "list",
-          "required": false,
-          "default": [],
-          "description": "Pre-flight check data"
-        }
-      ]
-    },
-
-    {
-      "path": "/mod_quiz_save_attempt",
-      "method": "GET",
-      "function": "mod_quiz_save_attempt",
-      "description": "Save quiz attempt responses",
-      "tags": ["Quizzes"],
-      "query_params": [
-        {
-          "name": "attemptid",
-          "type": "int",
-          "required": true,
-          "description": "Attempt ID"
-        },
-        {
-          "name": "data",
-          "type": "list",
-          "required": true,
-          "description": "Question responses data"
-        },
-        {
-          "name": "preflightdata",
-          "type": "list",
-          "required": false,
-          "default": [],
-          "description": "Pre-flight check data"
-        }
-      ]
+      }
     },
 
     {
@@ -814,27 +856,253 @@
       "description": "Start a new quiz attempt",
       "tags": ["Quizzes"],
       "query_params": [
+        { "name": "quizid", "type": "int", "required": true, "description": "Quiz ID" },
         {
-          "name": "quizid",
-          "type": "int",
+          "name": "preflightdata",
+          "type": "list",
+          "required": false,
+          "default": [],
+          "description": "Pre-flight data as list of {name, value} objects (JSON or CSV)."
+        },
+        { "name": "forcenew", "type": "bool", "required": false, "default": false, "description": "Force new attempt." }
+      ],
+      "responses": {
+        "200": {
+          "description": "Attempt started",
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" },
+              "example": {
+                "attempt": { "id": 101, "quiz": 15, "state": "inprogress", "timestart": 1694350000, "layout": "1,2,3,0" },
+                "warnings": []
+              }
+            }
+          }
+        }
+      }
+    },
+
+    {
+      "path": "/mod_quiz_get_attempt_data",
+      "method": "GET",
+      "function": "mod_quiz_get_attempt_data",
+      "description": "Get quiz attempt data including questions",
+      "tags": ["Quizzes"],
+      "query_params": [
+        { "name": "attemptid", "type": "int", "required": true, "description": "Attempt ID" },
+        { "name": "page", "type": "int", "required": false, "default": 0, "description": "Page number (-1 for all pages)" },
+        {
+          "name": "preflightdata",
+          "type": "list",
+          "required": false,
+          "default": [],
+          "description": "Pre-flight data as list of {name, value} objects (JSON)."
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Attempt data including question states and HTML.",
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" },
+              "example": {
+                "attempt": { "id": 101, "state": "inprogress" },
+                "questions": [
+                  { "slot": 1, "type": "multichoice", "html": "<div>Question 1 HTML</div>", "name": "Q1" }
+                ],
+                "warnings": []
+              }
+            }
+          }
+        }
+      }
+    },
+
+    {
+      "path": "/mod_quiz_save_attempt",
+      "method": "GET",
+      "function": "mod_quiz_save_attempt",
+      "description": "Save quiz attempt responses",
+      "tags": ["Quizzes"],
+      "query_params": [
+        { "name": "attemptid", "type": "int", "required": true, "description": "Attempt ID" },
+        {
+          "name": "data",
+          "type": "list",
           "required": true,
-          "description": "Quiz ID"
+          "description": "Responses as list of {name, value} objects, e.g. [{\"name\":\"q1:1_answer\",\"value\":\"2\"}]."
         },
         {
           "name": "preflightdata",
           "type": "list",
           "required": false,
           "default": [],
-          "description": "Pre-flight check data"
-        },
-        {
-          "name": "forcenew",
-          "type": "bool",
-          "required": false,
-          "default": false,
-          "description": "Force new attempt"
+          "description": "Pre-flight data as list of {name, value} objects"
         }
-      ]
+      ],
+      "responses": {
+        "200": {
+          "description": "Save result",
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" },
+              "example": { "status": true, "warnings": [] }
+            }
+          }
+        }
+      }
+    },
+
+    {
+      "path": "/mod_quiz_process_attempt",
+      "method": "GET",
+      "function": "mod_quiz_process_attempt",
+      "description": "Process and optionally finish a quiz attempt",
+      "tags": ["Quizzes"],
+      "query_params": [
+        { "name": "attemptid", "type": "int", "required": true, "description": "Attempt ID" },
+        {
+          "name": "data",
+          "type": "list",
+          "required": false,
+          "default": [],
+          "description": "Responses as list of {name, value} objects"
+        },
+        { "name": "finishattempt", "type": "bool", "required": false, "default": false, "description": "Finish the attempt" },
+        { "name": "timeup", "type": "bool", "required": false, "default": false, "description": "Time is up" },
+        {
+          "name": "preflightdata",
+          "type": "list",
+          "required": false,
+          "default": [],
+          "description": "Pre-flight data as list of {name, value} objects"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Processing result",
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" },
+              "example": {
+                "state": "finished",
+                "attempt": { "id": 101, "sumgrades": 8.5, "state": "finished" },
+                "message": "The attempt has been submitted",
+                "warnings": []
+              }
+            }
+          }
+        }
+      }
+    },
+
+    {
+      "path": "/mod_quiz_get_attempt_summary",
+      "method": "GET",
+      "function": "mod_quiz_get_attempt_summary",
+      "description": "Get quiz attempt summary",
+      "tags": ["Quizzes"],
+      "query_params": [
+        { "name": "attemptid", "type": "int", "required": true, "description": "Attempt ID" },
+        {
+          "name": "preflightdata",
+          "type": "list",
+          "required": false,
+          "default": [],
+          "description": "Pre-flight data as list of {name, value} objects"
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Attempt summary including question statuses.",
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" },
+              "example": {
+                "attempt": { "id": 101, "state": "finished" },
+                "questions": [ { "slot": 1, "status": "Answered" } ],
+                "warnings": []
+              }
+            }
+          }
+        }
+      }
+    },
+
+    {
+      "path": "/mod_quiz_get_user_attempts",
+      "method": "GET",
+      "function": "mod_quiz_get_user_attempts",
+      "description": "Get quiz attempts for a user (defaults to current user)",
+      "tags": ["Quizzes"],
+      "query_params": [
+        { "name": "quizid", "type": "int", "required": true, "description": "Quiz ID" },
+        { "name": "userid", "type": "int", "required": false, "description": "User ID (optional)" }
+      ],
+      "responses": {
+        "200": {
+          "description": "List of attempts",
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" },
+              "example": {
+                "attempts": [
+                  { "id": 101, "attempt": 1, "state": "finished", "sumgrades": 8.5 },
+                  { "id": 102, "attempt": 2, "state": "inprogress" }
+                ],
+                "warnings": []
+              }
+            }
+          }
+        }
+      }
+    },
+
+    {
+      "path": "/mod_quiz_view_attempt",
+      "method": "GET",
+      "function": "mod_quiz_view_attempt",
+      "description": "Log that a user viewed an attempt (for analytics).",
+      "tags": ["Quizzes"],
+      "query_params": [
+        { "name": "attemptid", "type": "int", "required": true, "description": "Attempt ID" },
+        { "name": "page", "type": "int", "required": false, "default": 0, "description": "Page number" }
+      ],
+      "responses": {
+        "200": {
+          "description": "View logged",
+          "content": { "application/json": { "schema": { "type": "object" }, "example": { "status": true } } }
+        }
+      }
+    },
+
+    {
+      "path": "/mod_quiz_get_attempt_review",
+      "method": "GET",
+      "function": "mod_quiz_get_attempt_review",
+      "description": "Get the review of a finished attempt, including question feedback.",
+      "tags": ["Quizzes"],
+      "query_params": [
+        { "name": "attemptid", "type": "int", "required": true, "description": "Attempt ID" },
+        { "name": "page", "type": "int", "required": false, "default": -1, "description": "Page (-1 for all)" }
+      ],
+      "responses": {
+        "200": {
+          "description": "Attempt review",
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" },
+              "example": {
+                "attempt": { "id": 101, "state": "finished", "sumgrades": 8.5 },
+                "questions": [
+                  { "slot": 1, "status": "Correct", "feedback": "Well done." }
+                ],
+                "warnings": []
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
