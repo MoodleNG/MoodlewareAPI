@@ -1,6 +1,6 @@
 import os
 import json
-from fastapi import Query, HTTPException, Response
+from fastapi import Query, HTTPException, Response, Request
 from typing import Optional
 import httpx
 from urllib.parse import urlencode
@@ -119,11 +119,24 @@ def _encode_param(params: dict, name: str, value, declared_type: str):
     params[name] = value
 
 
+# Extract token from Authorization header or query (no sessions)
+async def _resolve_token_from_request(request: Request) -> str:
+    # Prefer Authorization header if present
+    auth = request.headers.get("Authorization")
+    if auth and auth.lower().startswith("bearer "):
+        return auth.split(" ", 1)[1].strip()
+    # Fallback to query string (?wstoken=)
+    qtok = request.query_params.get("wstoken")
+    if qtok:
+        return qtok
+    return ""
+
+
 def create_handler(function_config, endpoint_path: str):
     query_params = function_config.get("query_params", [])
     method = function_config.get("method", "GET").upper()
 
-    async def handler(response: Response, **kwargs):
+    async def handler(request: Request, response: Response, **kwargs):
         base_url = get_env_variable("MOODLE_URL") or kwargs.get("moodle_url")
         if not base_url:
             raise HTTPException(status_code=400, detail="Moodle URL not provided. Set MOODLE_URL env var or pass moodle_url as query param.")
@@ -142,9 +155,12 @@ def create_handler(function_config, endpoint_path: str):
             if pname in kwargs and kwargs[pname] is not None:
                 _encode_param(params, pname, kwargs[pname], ptype)
 
-        # Token handling
-        if "wstoken" in kwargs and kwargs["wstoken"] is not None:
-            params["wstoken"] = kwargs["wstoken"]
+        # Token handling: for non-auth routes, resolve from header or query
+        is_auth_endpoint = ep_path.endswith("/login/token.php")
+        if not is_auth_endpoint:
+            token = await _resolve_token_from_request(request)
+            if token:
+                params["wstoken"] = token
 
         # For core REST endpoint include wsfunction & format
         if ep_path.endswith("/webservice/rest/server.php"):
@@ -186,6 +202,11 @@ def create_handler(function_config, endpoint_path: str):
     import inspect
     sig_params = [
         inspect.Parameter(
+            "request",
+            inspect.Parameter.POSITIONAL_OR_KEYWORD,
+            annotation=Request
+        ),
+        inspect.Parameter(
             "response",
             inspect.Parameter.POSITIONAL_OR_KEYWORD,
             annotation=Response
@@ -200,17 +221,6 @@ def create_handler(function_config, endpoint_path: str):
                 inspect.Parameter.KEYWORD_ONLY,
                 annotation=str,
                 default=Query(..., description="URL of the Moodle instance, e.g., 'https://moodle.example.com'.")
-            )
-        )
-
-    param_names = {p["name"] if isinstance(p, dict) else p for p in query_params}
-    if not {"username", "password"}.issubset(param_names):
-        sig_params.append(
-            inspect.Parameter(
-                "wstoken",
-                inspect.Parameter.KEYWORD_ONLY,
-                annotation=str,
-                default=Query(..., description="Your Moodle Token, obtained from /auth")
             )
         )
 
