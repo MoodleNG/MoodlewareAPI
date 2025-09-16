@@ -4,3 +4,4 @@ pydantic
 uvicorn
 colorlog
 python-dotenv
+itsdangerous
