@@ -248,6 +248,76 @@
     },
 
     {
+      "path": "/core_course_get_categories",
+      "method": "GET",
+      "function": "core_course_get_categories",
+      "description": "Get course categories",
+      "tags": ["Courses"],
+      "query_params": [],
+      "responses": {
+        "200": {
+          "description": "List of course categories",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {"type": "integer"},
+                    "name": {"type": "string"},
+                    "description": {"type": "string"},
+                    "descriptionformat": {"type": "integer"},
+                    "parent": {"type": "integer"},
+                    "sortorder": {"type": "integer"},
+                    "coursecount": {"type": "integer"},
+                    "depth": {"type": "integer"},
+                    "path": {"type": "string"}
+                  }
+                }
+              },
+              "example": [
+                {
+                  "id": 60,
+                  "name": "ABU-SOL",
+                  "description": "<p>ABU-Moodle-Kurse des Projekts nachhaltige Lernorganisationsformen, in denen begleitetes selbstorganisisertes Lernen (SOL) und eine Einführung des selbstgesteuerten Lernen in einem Pilotversuch getestet wird.<br /></p>",
+                  "descriptionformat": 1,
+                  "parent": 0,
+                  "sortorder": 10000,
+                  "coursecount": 4,
+                  "depth": 1,
+                  "path": "/60"
+                },
+                {
+                  "id": 48,
+                  "name": "Automatikmonteur",
+                  "description": "Sammelgefäss für alle Kurse des Berufs Automatikmonteur",
+                  "descriptionformat": 1,
+                  "parent": 0,
+                  "sortorder": 100000,
+                  "coursecount": 10,
+                  "depth": 1,
+                  "path": "/48"
+                },
+                {
+                  "id": 17,
+                  "name": "Automobil",
+                  "description": "",
+                  "descriptionformat": 1,
+                  "parent": 0,
+                  "sortorder": 110000,
+                  "coursecount": 0,
+                  "depth": 1,
+                  "path": "/17"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+
+    {
       "path": "/core_enrol_get_enrolled_users",
       "method": "GET",
       "function": "core_enrol_get_enrolled_users",
