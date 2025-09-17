@@ -1,0 +1,34 @@
+{
+  "method": "GET",
+  "description": "Log that a user viewed an attempt (for analytics).",
+  "query_params": [
+    {
+      "name": "attemptid",
+      "type": "int",
+      "required": true,
+      "description": "Attempt ID"
+    },
+    {
+      "name": "page",
+      "type": "int",
+      "required": false,
+      "default": 0,
+      "description": "Page number"
+    }
+  ],
+  "responses": {
+    "200": {
+      "description": "View logged",
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object"
+          },
+          "example": {
+            "status": true
+          }
+        }
+      }
+    }
+  }
+}

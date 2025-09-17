@@ -1,0 +1,12 @@
+{
+  "method": "GET",
+  "description": "Self-enrol user in a course | unenrol by using function on enrolled course",
+  "query_params": [
+    {
+      "name": "courseid",
+      "type": "int",
+      "required": true,
+      "description": "Course ID"
+    }
+  ]
+}

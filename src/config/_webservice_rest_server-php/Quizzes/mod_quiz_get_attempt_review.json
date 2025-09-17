@@ -1,0 +1,46 @@
+{
+  "method": "GET",
+  "description": "Get the review of a finished attempt, including question feedback.",
+  "query_params": [
+    {
+      "name": "attemptid",
+      "type": "int",
+      "required": true,
+      "description": "Attempt ID"
+    },
+    {
+      "name": "page",
+      "type": "int",
+      "required": false,
+      "default": -1,
+      "description": "Page (-1 for all)"
+    }
+  ],
+  "responses": {
+    "200": {
+      "description": "Attempt review",
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object"
+          },
+          "example": {
+            "attempt": {
+              "id": 101,
+              "state": "finished",
+              "sumgrades": 8.5
+            },
+            "questions": [
+              {
+                "slot": 1,
+                "status": "Correct",
+                "feedback": "Well done."
+              }
+            ],
+            "warnings": []
+          }
+        }
+      }
+    }
+  }
+}

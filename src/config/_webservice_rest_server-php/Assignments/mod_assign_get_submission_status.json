@@ -1,0 +1,18 @@
+{
+  "method": "GET",
+  "description": "Get assignment submission status",
+  "query_params": [
+    {
+      "name": "assignid",
+      "type": "int",
+      "required": true,
+      "description": "Assignment ID"
+    },
+    {
+      "name": "userid",
+      "type": "int",
+      "required": false,
+      "description": "User ID (optional)"
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "method": "GET",
+  "description": "Process and optionally finish a quiz attempt",
+  "query_params": [
+    {
+      "name": "attemptid",
+      "type": "int",
+      "required": true,
+      "description": "Attempt ID"
+    },
+    {
+      "name": "data",
+      "type": "list",
+      "required": false,
+      "default": [],
+      "description": "Responses as list of {name, value} objects"
+    },
+    {
+      "name": "finishattempt",
+      "type": "bool",
+      "required": false,
+      "default": false,
+      "description": "Finish the attempt"
+    },
+    {
+      "name": "timeup",
+      "type": "bool",
+      "required": false,
+      "default": false,
+      "description": "Time is up"
+    },
+    {
+      "name": "preflightdata",
+      "type": "list",
+      "required": false,
+      "default": [],
+      "description": "Pre-flight data as list of {name, value} objects"
+    }
+  ],
+  "responses": {
+    "200": {
+      "description": "Processing result",
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object"
+          },
+          "example": {
+            "state": "finished",
+            "attempt": {
+              "id": 101,
+              "sumgrades": 8.5,
+              "state": "finished"
+            },
+            "message": "The attempt has been submitted",
+            "warnings": []
+          }
+        }
+      }
+    }
+  }
+}

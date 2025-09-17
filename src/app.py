@@ -52,7 +52,11 @@ async def add_request_id(request: Request, call_next: Callable):
 # Optional HTTP Bearer security for Swagger Authorize
 http_bearer = HTTPBearer(auto_error=False)
 
-config = load_config("config.json")
+# Load configuration from organized structure
+config_dir = os.path.join(os.path.dirname(__file__), "config")
+logger.info(f"Loading config from: {config_dir}")
+config = load_config(config_dir)
+logger.info(f"Loaded {len(config)} endpoint(s)")
 
 for endpoint_path, functions in config.items():
     logger.debug(f"Processing endpoint: {endpoint_path}")

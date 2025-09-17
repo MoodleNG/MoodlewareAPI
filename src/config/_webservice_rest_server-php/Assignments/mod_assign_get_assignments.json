@@ -1,0 +1,12 @@
+{
+  "method": "GET",
+  "description": "Get assignments from specified courses",
+  "query_params": [
+    {
+      "name": "courseids",
+      "type": "list",
+      "required": true,
+      "description": "List of course IDs"
+    }
+  ]
+}

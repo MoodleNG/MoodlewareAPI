@@ -1,0 +1,18 @@
+{
+  "method": "GET",
+  "description": "Get user preferences",
+  "query_params": [
+    {
+      "name": "userid",
+      "type": "int",
+      "required": false,
+      "description": "User ID (optional)"
+    },
+    {
+      "name": "name",
+      "type": "str",
+      "required": false,
+      "description": "Preference name"
+    }
+  ]
+}

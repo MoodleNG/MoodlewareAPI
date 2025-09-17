@@ -1,0 +1,12 @@
+{
+  "method": "GET",
+  "description": "Get user profiles for users in a course",
+  "query_params": [
+    {
+      "name": "courseid",
+      "type": "int",
+      "required": true,
+      "description": "Course ID"
+    }
+  ]
+}

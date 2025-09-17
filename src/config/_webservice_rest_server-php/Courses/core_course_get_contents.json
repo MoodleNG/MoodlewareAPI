@@ -1,0 +1,12 @@
+{
+  "method": "GET",
+  "description": "Get course contents (sections and activities)",
+  "query_params": [
+    {
+      "name": "courseid",
+      "type": "int",
+      "required": true,
+      "description": "Course ID"
+    }
+  ]
+}

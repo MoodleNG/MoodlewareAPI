@@ -1,0 +1,19 @@
+{
+  "method": "GET",
+  "description": "Get grade items for a course",
+  "query_params": [
+    {
+      "name": "courseid",
+      "type": "int",
+      "required": true,
+      "description": "Course ID"
+    },
+    {
+      "name": "userid",
+      "type": "int",
+      "required": false,
+      "default": 0,
+      "description": "User ID"
+    }
+  ]
+}

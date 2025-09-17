@@ -1,0 +1,12 @@
+{
+  "method": "GET",
+  "description": "Get assignment submissions",
+  "query_params": [
+    {
+      "name": "assignmentids",
+      "type": "list",
+      "required": true,
+      "description": "Assignment IDs"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "method": "GET",
+  "description": "Get users enrolled in a course",
+  "query_params": [
+    {
+      "name": "courseid",
+      "type": "int",
+      "required": true,
+      "description": "Course ID"
+    }
+  ]
+}
