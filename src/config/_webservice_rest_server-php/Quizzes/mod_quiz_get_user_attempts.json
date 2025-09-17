@@ -1,0 +1,46 @@
+{
+  "method": "GET",
+  "description": "Get quiz attempts for a user (defaults to current user)",
+  "query_params": [
+    {
+      "name": "quizid",
+      "type": "int",
+      "required": true,
+      "description": "Quiz ID"
+    },
+    {
+      "name": "userid",
+      "type": "int",
+      "required": false,
+      "description": "User ID (optional)"
+    }
+  ],
+  "responses": {
+    "200": {
+      "description": "List of attempts",
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object"
+          },
+          "example": {
+            "attempts": [
+              {
+                "id": 101,
+                "attempt": 1,
+                "state": "finished",
+                "sumgrades": 8.5
+              },
+              {
+                "id": 102,
+                "attempt": 2,
+                "state": "inprogress"
+              }
+            ],
+            "warnings": []
+          }
+        }
+      }
+    }
+  }
+}

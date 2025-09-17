@@ -1,0 +1,44 @@
+{
+  "method": "GET",
+  "description": "Get quiz attempt summary",
+  "query_params": [
+    {
+      "name": "attemptid",
+      "type": "int",
+      "required": true,
+      "description": "Attempt ID"
+    },
+    {
+      "name": "preflightdata",
+      "type": "list",
+      "required": false,
+      "default": [],
+      "description": "Pre-flight data as list of {name, value} objects"
+    }
+  ],
+  "responses": {
+    "200": {
+      "description": "Attempt summary including question statuses.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object"
+          },
+          "example": {
+            "attempt": {
+              "id": 101,
+              "state": "finished"
+            },
+            "questions": [
+              {
+                "slot": 1,
+                "status": "Answered"
+              }
+            ],
+            "warnings": []
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "method": "GET",
+  "description": "Get files from specified context",
+  "query_params": [
+    {
+      "name": "contextid",
+      "type": "int",
+      "required": true,
+      "description": "Context ID"
+    },
+    {
+      "name": "component",
+      "type": "str",
+      "required": true,
+      "description": "Component name"
+    },
+    {
+      "name": "filearea",
+      "type": "str",
+      "required": true,
+      "description": "File area"
+    },
+    {
+      "name": "itemid",
+      "type": "int",
+      "required": false,
+      "default": 0,
+      "description": "Item ID"
+    },
+    {
+      "name": "filepath",
+      "type": "str",
+      "required": false,
+      "default": "/",
+      "description": "File path"
+    },
+    {
+      "name": "filename",
+      "type": "str",
+      "required": false,
+      "default": "",
+      "description": "File name"
+    }
+  ]
+}

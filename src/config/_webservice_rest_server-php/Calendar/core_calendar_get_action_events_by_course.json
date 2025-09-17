@@ -1,0 +1,37 @@
+{
+  "method": "GET",
+  "description": "Get action events (assignments, quizzes) by course",
+  "query_params": [
+    {
+      "name": "courseid",
+      "type": "int",
+      "required": true,
+      "description": "Course ID"
+    },
+    {
+      "name": "timesortfrom",
+      "type": "int",
+      "required": false,
+      "description": "Time sort from (timestamp)"
+    },
+    {
+      "name": "timesortto",
+      "type": "int",
+      "required": false,
+      "description": "Time sort to (timestamp)"
+    },
+    {
+      "name": "aftereventid",
+      "type": "int",
+      "required": false,
+      "description": "After event ID"
+    },
+    {
+      "name": "limitnum",
+      "type": "int",
+      "required": false,
+      "default": 20,
+      "description": "Number of events to return"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "method": "GET",
+  "description": "Get discussions in a forum",
+  "query_params": [
+    {
+      "name": "forumid",
+      "type": "int",
+      "required": true,
+      "description": "Forum ID"
+    }
+  ]
+}

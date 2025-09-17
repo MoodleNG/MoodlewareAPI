@@ -1,0 +1,52 @@
+{
+  "method": "GET",
+  "description": "Get messages",
+  "query_params": [
+    {
+      "name": "useridto",
+      "type": "int",
+      "required": true,
+      "description": "User ID to (recipient)"
+    },
+    {
+      "name": "useridfrom",
+      "type": "int",
+      "required": false,
+      "description": "User ID from (sender)"
+    },
+    {
+      "name": "type",
+      "type": "str",
+      "required": false,
+      "default": "both",
+      "description": "Message type (sent, received, both)"
+    },
+    {
+      "name": "read",
+      "type": "bool",
+      "required": false,
+      "description": "Read status"
+    },
+    {
+      "name": "newestfirst",
+      "type": "bool",
+      "required": false,
+      "default": true,
+      "description": "Sort newest first"
+    },
+    {
+      "name": "limitfrom",
+      "type": "int",
+      "required": false,
+      "default": 0,
+      "description": "Limit from"
+    },
+    {
+      "name": "limitnum",
+      "type": "int",
+      "required": false,
+      "default": 100,
+      "description": "Number of messages"
+    }
+  ]
+}

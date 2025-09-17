@@ -1,0 +1,40 @@
+{
+  "method": "GET",
+  "description": "Search courses by criteria",
+  "query_params": [
+    {
+      "name": "criterianame",
+      "type": "str",
+      "required": false,
+      "default": "search",
+      "description": "Search criteria name"
+    },
+    {
+      "name": "criteriavalue",
+      "type": "str",
+      "required": true,
+      "description": "Search term"
+    },
+    {
+      "name": "page",
+      "type": "int",
+      "required": false,
+      "default": 0,
+      "description": "Page number"
+    },
+    {
+      "name": "perpage",
+      "type": "int",
+      "required": false,
+      "default": 100,
+      "description": "Number of results per page"
+    },
+    {
+      "name": "limittoenrolled",
+      "type": "int",
+      "required": false,
+      "default": 0,
+      "description": "Limit to enrolled courses only"
+    }
+  ]
+}

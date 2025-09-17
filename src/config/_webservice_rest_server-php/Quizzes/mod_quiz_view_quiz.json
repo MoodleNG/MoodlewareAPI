@@ -1,0 +1,28 @@
+{
+  "method": "GET",
+  "description": "Log that a user viewed the quiz (for analytics).",
+  "query_params": [
+    {
+      "name": "quizid",
+      "type": "int",
+      "required": true,
+      "description": "Quiz ID"
+    }
+  ],
+  "responses": {
+    "200": {
+      "description": "View logged",
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object"
+          },
+          "example": {
+            "status": true,
+            "warnings": []
+          }
+        }
+      }
+    }
+  }
+}

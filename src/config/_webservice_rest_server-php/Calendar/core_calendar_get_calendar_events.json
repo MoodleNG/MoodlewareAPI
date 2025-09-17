@@ -1,0 +1,12 @@
+{
+  "method": "GET",
+  "description": "Get calendar events",
+  "query_params": [
+    {
+      "name": "courseid",
+      "type": "int",
+      "required": false,
+      "description": "Course ID (optional)"
+    }
+  ]
+}

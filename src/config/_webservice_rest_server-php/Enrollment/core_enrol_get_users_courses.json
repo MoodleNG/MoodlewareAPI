@@ -1,0 +1,13 @@
+{
+  "method": "GET",
+  "description": "Get courses the user is enrolled in",
+  "query_params": [
+    {
+      "name": "userid",
+      "type": "int",
+      "required": false,
+      "default": 0,
+      "description": "User ID (0 for current user)"
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "method": "GET",
+  "description": "Get quiz access information",
+  "query_params": [
+    {
+      "name": "quizid",
+      "type": "int",
+      "required": true,
+      "description": "Quiz ID"
+    }
+  ],
+  "responses": {
+    "200": {
+      "description": "Quiz access info for current user",
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "canattempt": {
+                "type": "boolean"
+              },
+              "canmanage": {
+                "type": "boolean"
+              },
+              "canpreview": {
+                "type": "boolean"
+              },
+              "canreviewmyattempts": {
+                "type": "boolean"
+              },
+              "canviewreports": {
+                "type": "boolean"
+              },
+              "accessrules": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "activerulenames": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "preventaccessreasons": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "warnings": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            },
+            "required": [
+              "canattempt",
+              "accessrules",
+              "warnings"
+            ]
+          },
+          "example": {
+            "canattempt": true,
+            "canmanage": false,
+            "canpreview": false,
+            "canreviewmyattempts": true,
+            "canviewreports": false,
+            "accessrules": [],
+            "activerulenames": [
+              "quizaccess_openclosedate"
+            ],
+            "preventaccessreasons": [],
+            "warnings": []
+          }
+        }
+      }
+    }
+  }
+}

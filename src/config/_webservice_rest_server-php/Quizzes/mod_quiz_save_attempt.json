@@ -1,0 +1,41 @@
+{
+  "method": "GET",
+  "description": "Save quiz attempt responses",
+  "query_params": [
+    {
+      "name": "attemptid",
+      "type": "int",
+      "required": true,
+      "description": "Attempt ID"
+    },
+    {
+      "name": "data",
+      "type": "list",
+      "required": true,
+      "description": "Responses as list of {name, value} objects, e.g. [{\"name\":\"q1:1_answer\",\"value\":\"2\"}]."
+    },
+    {
+      "name": "preflightdata",
+      "type": "list",
+      "required": false,
+      "default": [],
+      "description": "Pre-flight data as list of {name, value} objects"
+    }
+  ],
+  "responses": {
+    "200": {
+      "description": "Save result",
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object"
+          },
+          "example": {
+            "status": true,
+            "warnings": []
+          }
+        }
+      }
+    }
+  }
+}

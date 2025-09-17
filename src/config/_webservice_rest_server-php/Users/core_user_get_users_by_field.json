@@ -1,0 +1,18 @@
+{
+  "method": "GET",
+  "description": "Get users by field (id, username, email, etc.)",
+  "query_params": [
+    {
+      "name": "field",
+      "type": "str",
+      "required": true,
+      "description": "Field to search by"
+    },
+    {
+      "name": "values",
+      "type": "list",
+      "required": true,
+      "description": "Values to search for"
+    }
+  ]
+}

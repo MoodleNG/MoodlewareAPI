@@ -1,0 +1,159 @@
+{
+  "method": "GET",
+  "description": "Get quizzes in specified courses",
+  "query_params": [
+    {
+      "name": "courseids",
+      "type": "list",
+      "required": true,
+      "description": "List of course IDs"
+    }
+  ],
+  "responses": {
+    "200": {
+      "description": "List of quizzes for the given courses",
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "quizzes": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "warnings": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            },
+            "required": [
+              "quizzes"
+            ]
+          },
+          "example": {
+            "quizzes": [
+              {
+                "id": 1001,
+                "coursemodule": 2001,
+                "course": 42,
+                "name": "Chemistry Homework Quiz",
+                "intro": "<p>Please answer all questions.</p>",
+                "introformat": 1,
+                "introfiles": [],
+                "section": 1,
+                "visible": true,
+                "groupmode": 0,
+                "groupingid": 0,
+                "lang": "en",
+                "timeopen": 0,
+                "timeclose": 0,
+                "timelimit": 0,
+                "overduehandling": "autoabandon",
+                "graceperiod": 0,
+                "preferredbehaviour": "deferredfeedback",
+                "canredoquestions": 0,
+                "attempts": 0,
+                "attemptonlast": 0,
+                "grademethod": 1,
+                "decimalpoints": 2,
+                "questiondecimalpoints": -1,
+                "reviewattempt": 69904,
+                "reviewcorrectness": 4368,
+                "reviewmaxmarks": 69904,
+                "reviewmarks": 4368,
+                "reviewspecificfeedback": 4368,
+                "reviewgeneralfeedback": 4368,
+                "reviewrightanswer": 4368,
+                "reviewoverallfeedback": 4368,
+                "questionsperpage": 1,
+                "navmethod": "free",
+                "sumgrades": 5,
+                "grade": 5,
+                "browsersecurity": "-",
+                "delay1": 0,
+                "delay2": 0,
+                "showuserpicture": 0,
+                "showblocks": 0,
+                "completionattemptsexhausted": 0,
+                "completionpass": 0,
+                "allowofflineattempts": 0,
+                "autosaveperiod": 60,
+                "hasfeedback": 0,
+                "hasquestions": 1
+              },
+              {
+                "id": 1002,
+                "coursemodule": 2002,
+                "course": 42,
+                "name": "Math Practice Quiz",
+                "intro": "<p>Practice questions for the exam.</p>",
+                "introformat": 1,
+                "introfiles": [],
+                "section": 1,
+                "visible": true,
+                "groupmode": 0,
+                "groupingid": 0,
+                "lang": "en",
+                "timeopen": 0,
+                "timeclose": 0,
+                "timelimit": 900,
+                "preferredbehaviour": "deferredfeedback",
+                "attempts": 2,
+                "grademethod": 4,
+                "decimalpoints": 2,
+                "questiondecimalpoints": -1,
+                "sumgrades": 4,
+                "grade": 4,
+                "hasfeedback": 0
+              },
+              {
+                "id": 1003,
+                "coursemodule": 2003,
+                "course": 42,
+                "name": "Biology Final Quiz",
+                "intro": "<p>Final quiz for the course.</p>",
+                "introformat": 1,
+                "introfiles": [],
+                "section": 2,
+                "visible": true,
+                "groupmode": 0,
+                "groupingid": 0,
+                "lang": "en",
+                "timeopen": 1710000000,
+                "timeclose": 1710600000,
+                "timelimit": 2400,
+                "preferredbehaviour": "immediatefeedback",
+                "attempts": 1,
+                "grademethod": 1,
+                "decimalpoints": 2,
+                "questiondecimalpoints": -1,
+                "sumgrades": 10,
+                "grade": 10,
+                "hasfeedback": 0
+              }
+            ],
+            "warnings": []
+          }
+        }
+      }
+    },
+    "422": {
+      "description": "Invalid Request",
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object"
+          },
+          "example": {
+            "error": "invalidparameter",
+            "errorcode": "invalidparameter"
+          }
+        }
+      }
+    }
+  }
+}
