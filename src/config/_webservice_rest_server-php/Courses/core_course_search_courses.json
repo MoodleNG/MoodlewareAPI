@@ -12,7 +12,7 @@
     {
       "name": "criteriavalue",
       "type": "str",
-      "required": true,
+      "required": false,
       "description": "Search term"
     },
     {
