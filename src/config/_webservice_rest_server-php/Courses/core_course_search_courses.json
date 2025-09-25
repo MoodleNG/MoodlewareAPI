@@ -13,8 +13,9 @@
       "name": "criteriavalue",
       "type": "str",
       "required": false,
-      "description": "Search term"
-    },
+      "description": "Search term",
+      "send_if_empty": true
+      },
     {
       "name": "page",
       "type": "int",

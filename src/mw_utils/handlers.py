@@ -111,8 +111,13 @@ def create_handler(function_config: Dict[str, Any], endpoint_path: str):
         for param in query_params:
             pname = param["name"]
             ptype = param.get("type", "str")
-            if pname in kwargs and kwargs[pname] is not None:
-                encode_param(params, pname, kwargs[pname], ptype)
+            send_if_empty = param.get("send_if_empty", False)
+            value = kwargs.get(pname, None)
+            if value is not None and value != "":
+                encode_param(params, pname, value, ptype)
+            elif send_if_empty:
+                # Always send, even if empty
+                encode_param(params, pname, "", ptype)
 
         if not _is_auth_endpoint(ep_path):
             token = await resolve_token_from_request(request)
