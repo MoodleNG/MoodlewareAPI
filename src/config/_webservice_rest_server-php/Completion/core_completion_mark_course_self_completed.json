@@ -1,0 +1,68 @@
+{
+  "method": "POST",
+  "description": "Mark a course as self-completed by the current user",
+  "query_params": [
+    {
+      "name": "courseid",
+      "type": "int",
+      "required": true,
+      "description": "Course ID to mark as completed"
+    }
+  ],
+  "responses": {
+    "200": {
+      "description": "Course marked as self-completed successfully",
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "boolean",
+                "description": "True if course was marked as completed"
+              },
+              "warnings": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "example": {
+            "status": true,
+            "warnings": []
+          }
+        }
+      }
+    },
+    "422": {
+      "description": "Invalid Request",
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object"
+          },
+          "example": {
+            "error": "invalidparameter",
+            "errorcode": "invalidparameter"
+          }
+        }
+      }
+    },
+    "403": {
+      "description": "Self-completion not enabled or permission denied",
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object"
+          },
+          "example": {
+            "error": "selfcompletionnotallowed",
+            "errorcode": "selfcompletionnotallowed"
+          }
+        }
+      }
+    }
+  }
+}

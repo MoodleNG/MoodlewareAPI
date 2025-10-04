@@ -1,0 +1,129 @@
+{
+  "method": "GET",
+  "description": "Get course completion status for a user",
+  "query_params": [
+    {
+      "name": "courseid",
+      "type": "int",
+      "required": true,
+      "description": "Course ID"
+    },
+    {
+      "name": "userid",
+      "type": "int",
+      "required": false,
+      "description": "User ID (defaults to current user if not specified)"
+    }
+  ],
+  "responses": {
+    "200": {
+      "description": "Course completion status information",
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "completionstatus": {
+                "type": "object",
+                "properties": {
+                  "completed": {
+                    "type": "boolean",
+                    "description": "Whether the course is completed"
+                  },
+                  "aggregation": {
+                    "type": "integer",
+                    "description": "Completion aggregation method"
+                  },
+                  "completions": {
+                    "type": "array",
+                    "description": "List of completion criteria",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "integer",
+                          "description": "Completion criteria type"
+                        },
+                        "title": {
+                          "type": "string",
+                          "description": "Criteria title"
+                        },
+                        "status": {
+                          "type": "string",
+                          "description": "Completion status (complete/incomplete)"
+                        },
+                        "complete": {
+                          "type": "boolean",
+                          "description": "Whether this criteria is complete"
+                        },
+                        "timecompleted": {
+                          "type": "integer",
+                          "description": "Timestamp when completed"
+                        },
+                        "details": {
+                          "type": "object",
+                          "description": "Additional criteria details"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "warnings": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "example": {
+            "completionstatus": {
+              "completed": false,
+              "aggregation": 1,
+              "completions": [
+                {
+                  "type": 4,
+                  "title": "Activity completion",
+                  "status": "incomplete",
+                  "complete": false,
+                  "timecompleted": 0,
+                  "details": {
+                    "rulename": "Complete all activities",
+                    "rulevalue": {
+                      "required": 5,
+                      "completed": 3
+                    }
+                  }
+                },
+                {
+                  "type": 6,
+                  "title": "Manual completion",
+                  "status": "incomplete",
+                  "complete": false,
+                  "timecompleted": 0,
+                  "details": {}
+                }
+              ]
+            },
+            "warnings": []
+          }
+        }
+      }
+    },
+    "422": {
+      "description": "Invalid Request",
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object"
+          },
+          "example": {
+            "error": "invalidparameter",
+            "errorcode": "invalidparameter"
+          }
+        }
+      }
+    }
+  }
+}

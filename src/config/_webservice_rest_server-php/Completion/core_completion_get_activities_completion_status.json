@@ -1,0 +1,214 @@
+{
+  "method": "GET",
+  "description": "Get completion status for activities in a course",
+  "query_params": [
+    {
+      "name": "courseid",
+      "type": "int",
+      "required": true,
+      "description": "Course ID"
+    },
+    {
+      "name": "userid",
+      "type": "int",
+      "required": false,
+      "description": "User ID (defaults to current user if not specified)"
+    }
+  ],
+  "responses": {
+    "200": {
+      "description": "List of activities with completion status",
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "statuses": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "cmid": {
+                      "type": "integer",
+                      "description": "Course module ID"
+                    },
+                    "modname": {
+                      "type": "string",
+                      "description": "Module name (e.g., resource, assign, quiz, label, url, feedback)"
+                    },
+                    "instance": {
+                      "type": "integer",
+                      "description": "Instance ID"
+                    },
+                    "state": {
+                      "type": "integer",
+                      "description": "Completion state (0=incomplete, 1=complete, 2=complete with pass)"
+                    },
+                    "timecompleted": {
+                      "type": "integer",
+                      "description": "Timestamp when completed (0 if not completed)"
+                    },
+                    "tracking": {
+                      "type": "integer",
+                      "description": "Completion tracking type (1=manual, 2=automatic)"
+                    },
+                    "overrideby": {
+                      "type": ["integer", "null"],
+                      "description": "User ID who overrode completion (null if not overridden)"
+                    },
+                    "valueused": {
+                      "type": "boolean",
+                      "description": "Whether this completion is used for course completion"
+                    },
+                    "hascompletion": {
+                      "type": "boolean",
+                      "description": "Whether the activity has completion enabled"
+                    },
+                    "isautomatic": {
+                      "type": "boolean",
+                      "description": "Whether completion is automatic"
+                    },
+                    "istrackeduser": {
+                      "type": "boolean",
+                      "description": "Whether the user is tracked for completion"
+                    },
+                    "uservisible": {
+                      "type": "boolean",
+                      "description": "Whether the activity is visible to the user"
+                    },
+                    "details": {
+                      "type": "array",
+                      "description": "Array of completion rule details",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "rulename": {
+                            "type": "string",
+                            "description": "Name of the completion rule (e.g., completionview, completionsubmit)"
+                          },
+                          "rulevalue": {
+                            "type": "object",
+                            "properties": {
+                              "status": {
+                                "type": "integer",
+                                "description": "Status of the rule (0=not met, 1=met)"
+                              },
+                              "description": {
+                                "type": "string",
+                                "description": "Description of the rule"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "isoverallcomplete": {
+                      "type": "boolean",
+                      "description": "Whether the activity is overall complete"
+                    }
+                  }
+                }
+              },
+              "warnings": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "example": {
+            "statuses": [
+              {
+                "cmid": 115312,
+                "modname": "resource",
+                "instance": 55202,
+                "state": 1,
+                "timecompleted": 1692954398,
+                "tracking": 2,
+                "overrideby": null,
+                "valueused": false,
+                "hascompletion": true,
+                "isautomatic": true,
+                "istrackeduser": true,
+                "uservisible": true,
+                "details": [
+                  {
+                    "rulename": "completionview",
+                    "rulevalue": {
+                      "status": 1,
+                      "description": "Anzeigen"
+                    }
+                  }
+                ],
+                "isoverallcomplete": true
+              },
+              {
+                "cmid": 116438,
+                "modname": "assign",
+                "instance": 5916,
+                "state": 0,
+                "timecompleted": 0,
+                "tracking": 2,
+                "overrideby": null,
+                "valueused": false,
+                "hascompletion": true,
+                "isautomatic": true,
+                "istrackeduser": true,
+                "uservisible": true,
+                "details": [
+                  {
+                    "rulename": "completionview",
+                    "rulevalue": {
+                      "status": 1,
+                      "description": "Anzeigen"
+                    }
+                  },
+                  {
+                    "rulename": "completionsubmit",
+                    "rulevalue": {
+                      "status": 0,
+                      "description": "Abgabe einreichen"
+                    }
+                  }
+                ],
+                "isoverallcomplete": false
+              },
+              {
+                "cmid": 116443,
+                "modname": "label",
+                "instance": 24959,
+                "state": 1,
+                "timecompleted": 1692955648,
+                "tracking": 1,
+                "overrideby": null,
+                "valueused": true,
+                "hascompletion": true,
+                "isautomatic": false,
+                "istrackeduser": true,
+                "uservisible": true,
+                "details": [],
+                "isoverallcomplete": true
+              }
+            ],
+            "warnings": []
+          }
+        }
+      }
+    },
+    "422": {
+      "description": "Invalid Request",
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object"
+          },
+          "example": {
+            "error": "invalidparameter",
+            "errorcode": "invalidparameter"
+          }
+        }
+      }
+    }
+  }
+}
