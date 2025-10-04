@@ -1,29 +1,56 @@
 import os
 import logging
 import uuid
+import asyncio
 from typing import Callable
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, Security, Response
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer
 from .mw_utils import get_env_variable, load_config, create_handler
+from .mw_utils.session import cleanup_expired_sessions, SESSION_MAX_AGE
 from .routes.secure_auth import router as secure_auth_router
 from .routes.files import router as files_router
 
 load_dotenv()
 
-# Configure logging level (default to INFO)
 _log_level_name = (get_env_variable("LOG_LEVEL") or "info").upper()
 _log_level = getattr(logging, _log_level_name, logging.INFO)
 logging.basicConfig(level=_log_level)
 logger = logging.getLogger("moodleware")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    async def session_cleanup_loop():
+        while True:
+            await asyncio.sleep(SESSION_MAX_AGE)
+            try:
+                cleaned = cleanup_expired_sessions()
+                if cleaned > 0:
+                    logger.info(f"Session cleanup: removed {cleaned} expired sessions")
+            except Exception as e:
+                logger.error(f"Session cleanup error: {e}")
+    
+    cleanup_task = asyncio.create_task(session_cleanup_loop())
+    logger.info(f"Started session cleanup task (runs every {SESSION_MAX_AGE}s)")
+    
+    yield
+    
+    cleanup_task.cancel()
+    try:
+        await cleanup_task
+    except asyncio.CancelledError:
+        pass
+    logger.info("Session cleanup task stopped")
 
 app = FastAPI(
     title="MoodlewareAPI",
     description="A FastAPI application to wrap Moodle API functions into individual endpoints.",
     version="0.1.0",
     docs_url="/",
-    redoc_url=None
+    redoc_url=None,
+    lifespan=lifespan
 )
 
 # CORS configuration from env
