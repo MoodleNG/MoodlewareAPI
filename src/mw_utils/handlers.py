@@ -1,12 +1,13 @@
 import logging
 from typing import Any, Dict, List, Optional
-from fastapi import Query, Body, HTTPException, Response, Request
+from fastapi import Query, Body, HTTPException, Response, Request, Cookie
 from pydantic import BaseModel, Field, create_model
 import httpx
 from .env import get_env_variable
 from .params import encode_param
 from .auth import resolve_token_from_request
 from .http_client import DEFAULT_HEADERS
+from .session import get_session, SESSION_COOKIE_NAME
 
 LOGGER = logging.getLogger("moodleware.handlers")
 
@@ -118,8 +119,19 @@ def create_handler(function_config: Dict[str, Any], endpoint_path: str):
         # Convert Pydantic model to dict
         body_dict = body.model_dump()
         
-        env_base = _get_env_moodle_url()
-        base_url = env_base or body_dict.get("moodle_url")
+        # Try to get Moodle URL and token from session first
+        session_cookie = request.cookies.get(SESSION_COOKIE_NAME)
+        session_data = None
+        if session_cookie:
+            session_data = get_session(session_cookie)
+        
+        # Determine base URL: session > env > request body
+        if session_data:
+            base_url = session_data.moodle_url
+        else:
+            env_base = _get_env_moodle_url()
+            base_url = env_base or body_dict.get("moodle_url")
+        
         if not base_url:
             raise HTTPException(status_code=400, detail="Moodle URL not provided. Set MOODLE_URL env var or pass moodle_url in request body.")
 
@@ -144,7 +156,11 @@ def create_handler(function_config: Dict[str, Any], endpoint_path: str):
                 encode_param(params, pname, "", ptype)
 
         if not _is_auth_endpoint(ep_path):
-            token = await resolve_token_from_request(request)
+            # Try session token first, fall back to header/query
+            if session_data:
+                token = session_data.moodle_token
+            else:
+                token = await resolve_token_from_request(request)
             if token:
                 params["wstoken"] = token
 

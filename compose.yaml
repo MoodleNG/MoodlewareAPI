@@ -6,8 +6,6 @@ services:
     build: .
     ports:
       - ${PORT-8000}:8000
-    environment:
-      - MOODLE_URL=${MOODLE_URL}
-      - ALLOW_ORIGINS=${ALLOW_ORIGINS}
-      - LOG_LEVEL=${LOG_LEVEL}
     restart: unless-stopped
+    env_file:
+      - .env

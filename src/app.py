@@ -7,6 +7,8 @@ from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer
 from .mw_utils import get_env_variable, load_config, create_handler
+from .routes.secure_auth import router as secure_auth_router
+from .routes.files import router as files_router
 
 load_dotenv()
 
@@ -26,20 +28,37 @@ app = FastAPI(
 
 # CORS configuration from env
 _allow_origins_env = (get_env_variable("ALLOW_ORIGINS") or "").strip()
-if _allow_origins_env == "" or _allow_origins_env == "*":
-    _allow_origins = ["*"]
-    _allow_credentials = False  # '*' cannot be used with credentials per CORS spec
-else:
-    _allow_origins = [o.strip() for o in _allow_origins_env.split(",") if o.strip()]
-    _allow_credentials = True
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=_allow_origins,
-    allow_credentials=_allow_credentials,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# Custom CORS handling: If "*", dynamically return requesting origin to allow credentials
+if _allow_origins_env == "" or _allow_origins_env == "*":
+    # Allow all origins by reflecting the request origin
+    @app.middleware("http")
+    async def dynamic_cors_middleware(request: Request, call_next):
+        response = await call_next(request)
+        origin = request.headers.get("origin")
+        
+        if origin:
+            response.headers["Access-Control-Allow-Origin"] = origin
+            response.headers["Access-Control-Allow-Credentials"] = "true"
+            response.headers["Access-Control-Allow-Methods"] = "*"
+            response.headers["Access-Control-Allow-Headers"] = "*"
+        
+        return response
+    
+    logger.info("CORS: Allowing all origins with credentials (dynamic reflection)")
+else:
+    # Specific origins configured
+    _allow_origins = [o.strip() for o in _allow_origins_env.split(",") if o.strip()]
+    
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=_allow_origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+    
+    logger.info(f"CORS: Allowing specific origins: {_allow_origins}")
 
 # Request ID middleware
 @app.middleware("http")
@@ -75,6 +94,12 @@ for endpoint_path, functions in config.items():
             responses=function.get("responses"),
             dependencies=deps,
         )
+
+# Register secure authentication routes
+app.include_router(secure_auth_router)
+
+# Register file proxy routes
+app.include_router(files_router)
 
 # Health check
 @app.post("/healthz", tags=["meta"])

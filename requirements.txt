@@ -1,5 +1,5 @@
 fastapi
-httpx
+httpx[http2]
 pydantic
 uvicorn
 colorlog
