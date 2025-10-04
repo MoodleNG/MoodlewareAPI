@@ -8,8 +8,9 @@ from fastapi import FastAPI, Request, Security, Response
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer
+from redis.asyncio import Redis
 from .mw_utils import get_env_variable, load_config, create_handler
-from .mw_utils.session import cleanup_expired_sessions, SESSION_MAX_AGE
+from .mw_utils.session import cleanup_expired_sessions, SESSION_MAX_AGE, init_redis, REDIS_URL
 from .routes.secure_auth import router as secure_auth_router
 from .routes.files import router as files_router
 
@@ -22,27 +23,34 @@ logger = logging.getLogger("moodleware")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    async def session_cleanup_loop():
-        while True:
-            await asyncio.sleep(SESSION_MAX_AGE)
-            try:
-                cleaned = cleanup_expired_sessions()
-                if cleaned > 0:
-                    logger.info(f"Session cleanup: removed {cleaned} expired sessions")
-            except Exception as e:
-                logger.error(f"Session cleanup error: {e}")
+    # Initialize Redis connection
+    redis_client = Redis.from_url(
+        REDIS_URL,
+        encoding="utf-8",
+        decode_responses=True,
+        socket_connect_timeout=5,
+        socket_keepalive=True,
+    )
     
-    cleanup_task = asyncio.create_task(session_cleanup_loop())
-    logger.info(f"Started session cleanup task (runs every {SESSION_MAX_AGE}s)")
+    try:
+        # Test Redis connection
+        await redis_client.ping()
+        logger.info(f"Redis connected successfully: {REDIS_URL}")
+        init_redis(redis_client)
+    except Exception as e:
+        logger.error(f"Failed to connect to Redis: {e}")
+        await redis_client.aclose()
+        raise
+    
+    # Redis handles session expiration automatically via SETEX
+    # No cleanup task needed anymore
+    logger.info(f"Session storage initialized (Redis with automatic expiration)")
     
     yield
     
-    cleanup_task.cancel()
-    try:
-        await cleanup_task
-    except asyncio.CancelledError:
-        pass
-    logger.info("Session cleanup task stopped")
+    # Close Redis connection
+    await redis_client.aclose()
+    logger.info("Redis connection closed")
 
 app = FastAPI(
     title="MoodlewareAPI",

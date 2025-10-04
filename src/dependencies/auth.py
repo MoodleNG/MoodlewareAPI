@@ -28,7 +28,7 @@ async def get_current_session(
             detail="Not authenticated"
         )
     
-    session = get_session(session_cookie)
+    session = await get_session(session_cookie)
     if not session:
         raise HTTPException(
             status_code=401,
@@ -55,4 +55,4 @@ async def get_optional_session(
     if not session_cookie:
         return None
     
-    return get_session(session_cookie)
+    return await get_session(session_cookie)

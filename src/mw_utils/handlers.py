@@ -123,7 +123,7 @@ def create_handler(function_config: Dict[str, Any], endpoint_path: str):
         session_cookie = request.cookies.get(SESSION_COOKIE_NAME)
         session_data = None
         if session_cookie:
-            session_data = get_session(session_cookie)
+            session_data = await get_session(session_cookie)
         
         # Determine base URL: session > env > request body
         if session_data:

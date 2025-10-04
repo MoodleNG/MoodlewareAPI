@@ -70,7 +70,7 @@ async def secure_login(login_data: LoginRequest, response: Response):
             if not moodle_token:
                 return LoginResponse(success=False, message="No token received from Moodle")
             
-            session_id = create_session(moodle_token=moodle_token, moodle_url=moodle_url)
+            session_id = await create_session(moodle_token=moodle_token, moodle_url=moodle_url)
             
             is_production = get_env_variable("ENVIRONMENT") == "production"
             response.set_cookie(
@@ -109,7 +109,7 @@ async def secure_login(login_data: LoginRequest, response: Response):
 @router.post("/logout")
 async def secure_logout(response: Response, session_cookie: Optional[str] = Cookie(None, alias=SESSION_COOKIE_NAME)):
     if session_cookie:
-        delete_session(session_cookie)
+        await delete_session(session_cookie)
     
     is_production = get_env_variable("ENVIRONMENT") == "production"
     response.delete_cookie(
@@ -125,12 +125,12 @@ async def secure_logout(response: Response, session_cookie: Optional[str] = Cook
     return {"success": True, "message": "Logged out successfully"}
 
 
-@router.get("/check")
+@router.post("/check")
 async def check_session(session_cookie: Optional[str] = Cookie(None, alias=SESSION_COOKIE_NAME)):
     if not session_cookie:
         return {"authenticated": False}
     
-    session = get_session(session_cookie)
+    session = await get_session(session_cookie)
     if not session:
         return {"authenticated": False}
     

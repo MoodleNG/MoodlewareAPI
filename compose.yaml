@@ -1,11 +1,36 @@
 # This compose file is meant for development purposes.
 
 services:
+  redis:
+    image: redis:alpine
+    container_name: MoodleNG-Redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    restart: unless-stopped
+
   moodle-api:
     container_name: MoodlewareAPI
     build: .
     ports:
-      - ${PORT-8000}:8000
+      - ${API_PORT:-8000}:8000
     restart: unless-stopped
     env_file:
       - .env
+    environment:
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+    depends_on:
+      redis:
+        condition: service_healthy
+
+
+volumes:
+  redis-data:
+    driver: local
