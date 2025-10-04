@@ -77,6 +77,6 @@ for endpoint_path, functions in config.items():
         )
 
 # Health check
-@app.get("/healthz", tags=["meta"])
+@app.post("/healthz", tags=["meta"])
 async def healthz():
     return {"status": "ok"}

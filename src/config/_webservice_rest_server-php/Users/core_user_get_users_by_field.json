@@ -1,5 +1,5 @@
 {
-  "method": "GET",
+  "method": "POST",
   "description": "Get users by field (id, username, email, etc.)",
   "query_params": [
     {

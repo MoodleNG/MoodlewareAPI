@@ -1,5 +1,5 @@
 {
-  "method": "GET",
+  "method": "POST",
   "description": "Search courses by criteria",
   "query_params": [
     {

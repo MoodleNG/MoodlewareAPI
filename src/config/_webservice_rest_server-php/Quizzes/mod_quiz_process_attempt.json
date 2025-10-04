@@ -1,5 +1,5 @@
 {
-  "method": "GET",
+  "method": "POST",
   "description": "Process and optionally finish a quiz attempt",
   "query_params": [
     {

@@ -1,5 +1,5 @@
 {
-  "method": "GET",
+  "method": "POST",
   "description": "Get the review of a finished attempt, including question feedback.",
   "query_params": [
     {

@@ -1,5 +1,5 @@
 {
-  "method": "GET",
+  "method": "POST",
   "description": "Save quiz attempt responses",
   "query_params": [
     {

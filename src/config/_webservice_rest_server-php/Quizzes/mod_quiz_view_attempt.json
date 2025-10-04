@@ -1,5 +1,5 @@
 {
-  "method": "GET",
+  "method": "POST",
   "description": "Log that a user viewed an attempt (for analytics).",
   "query_params": [
     {
