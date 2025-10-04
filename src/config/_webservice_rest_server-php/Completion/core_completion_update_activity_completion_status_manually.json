@@ -1,0 +1,88 @@
+{
+  "method": "POST",
+  "description": "Manually update completion status for an activity (current user only, requires manual completion tracking)",
+  "query_params": [
+    {
+      "name": "cmid",
+      "type": "int",
+      "required": true,
+      "description": "Course module ID"
+    },
+    {
+      "name": "completed",
+      "type": "bool",
+      "required": true,
+      "description": "True to mark as completed, false to mark as incomplete"
+    }
+  ],
+  "responses": {
+    "200": {
+      "description": "Completion status updated successfully",
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "boolean",
+                "description": "True if update was successful"
+              },
+              "warnings": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "example": {
+            "status": true,
+            "warnings": []
+          }
+        }
+      }
+    },
+    "422": {
+      "description": "Invalid Request",
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object"
+          },
+          "example": {
+            "error": "invalidparameter",
+            "errorcode": "invalidparameter"
+          }
+        }
+      }
+    },
+    "403": {
+      "description": "Permission denied - user doesn't have 'moodle/course:togglecompletion' capability",
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object"
+          },
+          "example": {
+            "error": "nopermission",
+            "errorcode": "nopermission"
+          }
+        }
+      }
+    },
+    "400": {
+      "description": "Activity doesn't have manual completion tracking enabled",
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object"
+          },
+          "example": {
+            "error": "invalidcompletiontracking",
+            "errorcode": "invalidcompletiontracking"
+          }
+        }
+      }
+    }
+  }
+}
