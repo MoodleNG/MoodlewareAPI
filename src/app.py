@@ -64,23 +64,19 @@ app = FastAPI(
 # CORS configuration from env
 _allow_origins_env = (get_env_variable("ALLOW_ORIGINS") or "").strip()
 
-# Custom CORS handling: If "*", dynamically return requesting origin to allow credentials
+# For wildcard CORS with credentials, we need to use regex to match all origins
 if _allow_origins_env == "" or _allow_origins_env == "*":
-    # Allow all origins by reflecting the request origin
-    @app.middleware("http")
-    async def dynamic_cors_middleware(request: Request, call_next):
-        response = await call_next(request)
-        origin = request.headers.get("origin")
-        
-        if origin:
-            response.headers["Access-Control-Allow-Origin"] = origin
-            response.headers["Access-Control-Allow-Credentials"] = "true"
-            response.headers["Access-Control-Allow-Methods"] = "*"
-            response.headers["Access-Control-Allow-Headers"] = "*"
-        
-        return response
-    
-    logger.info("CORS: Allowing all origins with credentials (dynamic reflection)")
+    # Use regex to allow any origin (required for credentials with wildcard)
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origin_regex=r".*",  # Allow any origin
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+        expose_headers=["X-Request-Id"],
+        max_age=86400,  # 24 hours
+    )
+    logger.info("CORS: Allowing all origins with credentials (regex pattern)")
 else:
     # Specific origins configured
     _allow_origins = [o.strip() for o in _allow_origins_env.split(",") if o.strip()]
@@ -91,6 +87,8 @@ else:
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
+        expose_headers=["X-Request-Id"],
+        max_age=86400,
     )
     
     logger.info(f"CORS: Allowing specific origins: {_allow_origins}")

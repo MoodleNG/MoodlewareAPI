@@ -14,7 +14,7 @@ from ..mw_utils.env import get_env_variable
 from ..mw_utils.http_client import DEFAULT_HEADERS
 
 logger = logging.getLogger("moodleware.secure_auth")
-router = APIRouter(prefix="/api/secure", tags=["Secure Authentication"])
+router = APIRouter(prefix="/secure", tags=["Secure Authentication"])
 
 
 class LoginRequest(BaseModel):
