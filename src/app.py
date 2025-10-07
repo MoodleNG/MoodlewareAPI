@@ -13,6 +13,7 @@ from .mw_utils import get_env_variable, load_config, create_handler
 from .mw_utils.session import cleanup_expired_sessions, SESSION_MAX_AGE, init_redis, REDIS_URL
 from .routes.secure_auth import router as secure_auth_router
 from .routes.files import router as files_router
+from .routes.office_preview import router as office_preview_router
 
 load_dotenv()
 
@@ -133,6 +134,9 @@ app.include_router(secure_auth_router)
 
 # Register file proxy routes
 app.include_router(files_router)
+
+# Register office preview one-time token routes
+app.include_router(office_preview_router)
 
 # Health check
 @app.post("/healthz", tags=["meta"])
