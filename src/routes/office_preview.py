@@ -5,23 +5,79 @@ Generates one-time use tokens for Office Live Viewer to access files.
 Solves the problem where Microsoft servers can't access authenticated POST endpoints.
 """
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
 from pydantic import BaseModel
 import httpx
 import secrets
 import logging
-from typing import Optional
+from typing import Optional, Dict, Tuple
 
 from ..dependencies.auth import get_current_session
 from ..mw_utils.session import SessionData, get_redis
 
-logger = logging.getLogger("moodleware")
+logger = logging.getLogger("moodleware.office_preview")
 
 router = APIRouter(prefix="/office", tags=["office-preview"])
 
-# One-time token prefix in Redis
-OT_TOKEN_PREFIX = "ot_token:"
-OT_TOKEN_EXPIRY = 60  # 60 seconds TTL for one-time tokens
+# Constants
+TOKEN_PREFIX = "ot_token:"
+TOKEN_EXPIRY_SECONDS = 60
+
+# Persistent HTTP client for connection pooling (shared pattern from files.py)
+_http_client: Optional[httpx.AsyncClient] = None
+
+
+async def get_http_client() -> httpx.AsyncClient:
+    """Get or create persistent HTTP client with connection pooling"""
+    global _http_client
+    if _http_client is None or _http_client.is_closed:
+        _http_client = httpx.AsyncClient(
+            timeout=60.0,
+            follow_redirects=True,
+            http2=True,
+            limits=httpx.Limits(
+                max_connections=100,
+                max_keepalive_connections=20,
+                keepalive_expiry=30.0,
+            )
+        )
+    return _http_client
+
+
+def normalize_file_path(file_path: str) -> str:
+    """Normalize file path to use webservice/pluginfile.php for token-based access"""
+    # Ensure path starts with /
+    if not file_path.startswith('/'):
+        file_path = f'/{file_path}'
+    
+    # Ensure we use webservice/pluginfile.php for token-based access
+    if '/pluginfile.php' in file_path and '/webservice/pluginfile.php' not in file_path:
+        file_path = file_path.replace('/pluginfile.php', '/webservice/pluginfile.php')
+    
+    return file_path
+
+
+async def fetch_file_from_moodle(
+    file_url: str,
+    moodle_token: str,
+    client: httpx.AsyncClient
+) -> Tuple[bytes, Dict[str, str]]:
+    """
+    Fetch file from Moodle with authentication
+    
+    Returns:
+        Tuple of (file_content, headers_dict)
+    """
+    response = await client.get(file_url, params={"token": moodle_token})
+    response.raise_for_status()
+    
+    # Extract useful headers from Moodle response
+    headers = {
+        "Content-Type": response.headers.get("Content-Type", "application/octet-stream"),
+        "Content-Disposition": response.headers.get("Content-Disposition", ""),
+    }
+    
+    return response.content, headers
 
 
 class GenerateTokenRequest(BaseModel):
@@ -61,7 +117,7 @@ async def generate_one_time_token(
     except RuntimeError:
         raise HTTPException(status_code=503, detail="Redis unavailable")
     
-    token_key = f"{OT_TOKEN_PREFIX}{one_time_token}"
+    token_key = f"{TOKEN_PREFIX}{one_time_token}"
     token_data = {
         "file_path": request.file_path,
         "moodle_url": session.moodle_url,
@@ -72,7 +128,7 @@ async def generate_one_time_token(
     try:
         # Store as hash with automatic expiry
         await redis_client.hset(token_key, mapping=token_data)
-        await redis_client.expire(token_key, OT_TOKEN_EXPIRY)
+        await redis_client.expire(token_key, TOKEN_EXPIRY_SECONDS)
         
         logger.info(f"Generated one-time token for session {session.session_id[:8]}..., file: {request.file_path}")
     except Exception as e:
@@ -86,7 +142,7 @@ async def generate_one_time_token(
     return GenerateTokenResponse(
         token=one_time_token,
         file_url=file_url,
-        expires_in=OT_TOKEN_EXPIRY
+        expires_in=TOKEN_EXPIRY_SECONDS
     )
 
 
@@ -110,7 +166,7 @@ async def get_file_with_one_time_token(
     except RuntimeError:
         raise HTTPException(status_code=503, detail="Redis unavailable")
     
-    token_key = f"{OT_TOKEN_PREFIX}{token}"
+    token_key = f"{TOKEN_PREFIX}{token}"
     
     try:
         # Retrieve token data
@@ -132,46 +188,48 @@ async def get_file_with_one_time_token(
         await redis_client.delete(token_key)
         logger.info(f"One-time token used by session {session_id[:8] if session_id else 'unknown'}..., file: {file_path}")
         
-        # Fetch file from Moodle
+        # Normalize and construct file URL
+        file_path = normalize_file_path(file_path)
         moodle_url = moodle_url.rstrip('/')
-        if not file_path.startswith('/'):
-            file_path = f'/{file_path}'
-        
-        # Ensure we use webservice/pluginfile.php for token-based access
-        if '/pluginfile.php' in file_path and '/webservice/pluginfile.php' not in file_path:
-            file_path = file_path.replace('/pluginfile.php', '/webservice/pluginfile.php')
-        
         file_url = f"{moodle_url}{file_path}"
         
-        # Fetch the file
-        async with httpx.AsyncClient(timeout=60.0, follow_redirects=True) as client:
-            response = await client.get(file_url, params={"token": moodle_token})
-            response.raise_for_status()
-            
-            # Return file with appropriate headers
-            from fastapi.responses import Response
-            return Response(
-                content=response.content,
-                media_type=response.headers.get("Content-Type", "application/octet-stream"),
-                headers={
-                    "Cache-Control": "no-store, no-cache, must-revalidate",  # Don't cache one-time tokens
-                    "X-Content-Type-Options": "nosniff",
-                    "Content-Disposition": response.headers.get("Content-Disposition", ""),
-                }
-            )
+        # Fetch file from Moodle with persistent HTTP client
+        client = await get_http_client()
+        file_content, moodle_headers = await fetch_file_from_moodle(
+            file_url,
+            moodle_token,
+            client
+        )
+        
+        # Return file with appropriate headers
+        return Response(
+            content=file_content,
+            media_type=moodle_headers.get("Content-Type", "application/octet-stream"),
+            headers={
+                "Cache-Control": "no-store, no-cache, must-revalidate",  # Don't cache one-time tokens
+                "X-Content-Type-Options": "nosniff",
+                "Content-Disposition": moodle_headers.get("Content-Disposition", ""),
+            }
+        )
     
     except httpx.HTTPStatusError as e:
-        logger.error(f"Failed to fetch file from Moodle: {e.response.status_code}")
+        logger.error(f"Moodle returned error {e.response.status_code} for one-time token request")
         raise HTTPException(
             status_code=e.response.status_code,
-            detail=f"Failed to fetch file from Moodle"
+            detail="Failed to fetch file from Moodle"
         )
     except httpx.RequestError as e:
-        logger.error(f"Failed to connect to Moodle: {str(e)}")
+        logger.error(f"Network error connecting to Moodle: {str(e)}")
         raise HTTPException(
             status_code=502,
-            detail=f"Failed to connect to Moodle"
+            detail="Failed to connect to Moodle"
         )
+    except HTTPException:
+        # Re-raise HTTP exceptions without wrapping
+        raise
     except Exception as e:
-        logger.error(f"Error processing one-time token: {str(e)}")
-        raise HTTPException(status_code=500, detail="Failed to process token")
+        logger.error(f"Unexpected error processing one-time token: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail="An unexpected error occurred"
+        )
