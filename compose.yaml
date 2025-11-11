@@ -46,7 +46,7 @@ services:
     ports:
       - "${API_PORT:-8000}:8000"
     environment:
-      - MOODLE_URL=${MOODLE_URL:-https://moodle.bbbaden.ch}
+      - MOODLE_URL=${MOODLE_URL:-https://moodle.school.edu}
       - ALLOW_ORIGINS=${ALLOW_ORIGINS:-*}
       - ENVIRONMENT=${ENVIRONMENT:-development}
       - LOG_LEVEL=${LOG_LEVEL:-info}
