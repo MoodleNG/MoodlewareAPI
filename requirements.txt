@@ -1,7 +1,8 @@
 fastapi
-httpx
+httpx[http2]
 pydantic
 uvicorn
 colorlog
 python-dotenv
 itsdangerous
+redis>=5.0.0

@@ -1,5 +1,5 @@
 {
-  "method": "GET",
+  "method": "POST",
   "description": "Get completion status for activities in a course",
   "query_params": [
     {

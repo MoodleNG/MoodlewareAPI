@@ -1,5 +1,5 @@
 {
-  "method": "GET",
+  "method": "POST",
   "description": "Get quiz attempts for a user (defaults to current user)",
   "query_params": [
     {

@@ -1,5 +1,5 @@
 {
-  "method": "GET",
+  "method": "POST",
   "description": "Get quiz access information",
   "query_params": [
     {

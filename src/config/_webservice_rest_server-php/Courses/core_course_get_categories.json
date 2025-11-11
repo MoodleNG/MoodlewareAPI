@@ -1,5 +1,5 @@
 {
-  "method": "GET",
+  "method": "POST",
   "description": "Get course categories",
   "query_params": [],
   "responses": {

@@ -1,13 +1,74 @@
-# This compose file is meant for development purposes.
+name: MoodlewareAPI
 
 services:
-  moodle-api:
-    container_name: MoodlewareAPI
-    build: .
+  redis:
+    image: redis:alpine
+    container_name: MoodleNG-Redis
     ports:
-      - ${PORT-8000}:8000
-    environment:
-      - MOODLE_URL=${MOODLE_URL}
-      - ALLOW_ORIGINS=${ALLOW_ORIGINS}
-      - LOG_LEVEL=${LOG_LEVEL}
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
     restart: unless-stopped
+    networks:
+      - moodleng-network
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: MoodleNG-Postgres
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-moodleng}
+      - POSTGRES_USER=${POSTGRES_USER:-moodleng}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-moodleng_dev_password}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-moodleng}"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - moodleng-network
+
+  moodleware-api:
+    container_name: MoodlewareAPI
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${API_PORT:-8000}:8000"
+    environment:
+      - MOODLE_URL=${MOODLE_URL:-https://moodle.school.edu}
+      - ALLOW_ORIGINS=${ALLOW_ORIGINS:-*}
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - SECRET_KEY=${SECRET_KEY:-cXWIu5Yj5P4TpHNcqwwVrPDqBQTstQF0A3_C_vjM2LQ}
+      - SESSION_MAX_AGE=${SESSION_MAX_AGE:-14400}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+      - DATABASE_URL=${DATABASE_URL:-postgresql://moodleng:moodleng_dev_password@postgres:5432/moodleng}
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - moodleng-network
+
+networks:
+  moodleng-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+    driver: local
+  postgres-data:
+    driver: local

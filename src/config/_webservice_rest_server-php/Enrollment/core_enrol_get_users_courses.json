@@ -1,5 +1,5 @@
 {
-  "method": "GET",
+  "method": "POST",
   "description": "Get courses the user is enrolled in",
   "query_params": [
     {
