@@ -16,24 +16,36 @@ from ..mw_utils.session import SessionData
 
 router = APIRouter(prefix="/files", tags=["files"])
 
-# Persistent HTTP client for connection pooling and HTTP/2
 _http_client: Optional[httpx.AsyncClient] = None
 
 
-async def get_http_client() -> httpx.AsyncClient:
-    """Get or create persistent HTTP client with connection pooling"""
+async def init_http_client() -> None:
+    """Initialize the persistent HTTP client. Called from app lifespan."""
     global _http_client
-    if _http_client is None or _http_client.is_closed:
-        _http_client = httpx.AsyncClient(
-            timeout=60.0,
-            follow_redirects=True,
-            http2=True,  # Enable HTTP/2 for multiplexing
-            limits=httpx.Limits(
-                max_connections=100,
-                max_keepalive_connections=20,
-                keepalive_expiry=30.0,
-            )
+    _http_client = httpx.AsyncClient(
+        timeout=60.0,
+        follow_redirects=True,
+        http2=True,
+        limits=httpx.Limits(
+            max_connections=100,
+            max_keepalive_connections=20,
+            keepalive_expiry=30.0,
         )
+    )
+
+
+async def close_http_client() -> None:
+    """Close the persistent HTTP client. Called from app lifespan."""
+    global _http_client
+    if _http_client is not None:
+        await _http_client.aclose()
+        _http_client = None
+
+
+def get_http_client() -> httpx.AsyncClient:
+    """Return the lifespan-managed HTTP client."""
+    if _http_client is None:
+        raise RuntimeError("HTTP client not initialized")
     return _http_client
 
 
@@ -96,8 +108,7 @@ async def proxy_file(
     file_url = f"{moodle_url}{path}"
     
     try:
-        # Get persistent HTTP client for connection pooling
-        client = await get_http_client()
+        client = get_http_client()
         
         # Fetch the file from Moodle with authentication
         file_content, moodle_headers = await fetch_file(
