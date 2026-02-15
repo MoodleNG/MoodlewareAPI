@@ -1,7 +1,6 @@
 import os
 import logging
 import uuid
-import asyncio
 from typing import Callable
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, Security, Response
@@ -9,11 +8,15 @@ from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer
 from redis.asyncio import Redis
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
+from .mw_utils.limiter import limiter
 from .mw_utils import get_env_variable, load_config, create_handler
-from .mw_utils.session import cleanup_expired_sessions, SESSION_MAX_AGE, init_redis, REDIS_URL
+from .mw_utils.session import init_redis, REDIS_URL
 from .routes.secure_auth import router as secure_auth_router
-from .routes.files import router as files_router
-from .routes.office_preview import router as office_preview_router
+from .routes.files import router as files_router, init_http_client as init_files_client, close_http_client as close_files_client
+from .routes.office_preview import router as office_preview_router, init_http_client as init_office_client, close_http_client as close_office_client
 
 load_dotenv()
 
@@ -32,9 +35,8 @@ async def lifespan(app: FastAPI):
         socket_connect_timeout=5,
         socket_keepalive=True,
     )
-    
+
     try:
-        # Test Redis connection
         await redis_client.ping()
         logger.info(f"Redis connected successfully: {REDIS_URL}")
         init_redis(redis_client)
@@ -42,14 +44,22 @@ async def lifespan(app: FastAPI):
         logger.error(f"Failed to connect to Redis: {e}")
         await redis_client.aclose()
         raise
-    
-    # Redis handles session expiration automatically via SETEX
-    # No cleanup task needed anymore
-    logger.info(f"Session storage initialized (Redis with automatic expiration)")
-    
+
+    logger.info("Session storage initialized (Redis with automatic expiration)")
+
+    # Initialize shared HTTP clients
+    await init_files_client()
+    logger.info("File proxy HTTP client initialized")
+    await init_office_client()
+    logger.info("Office preview HTTP client initialized")
+
     yield
-    
-    # Close Redis connection
+
+    # Teardown
+    await close_files_client()
+    logger.info("File proxy HTTP client closed")
+    await close_office_client()
+    logger.info("Office preview HTTP client closed")
     await redis_client.aclose()
     logger.info("Redis connection closed")
 
@@ -61,6 +71,10 @@ app = FastAPI(
     redoc_url=None,
     lifespan=lifespan
 )
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_middleware(SlowAPIMiddleware)
 
 # CORS configuration from env
 _allow_origins_env = (get_env_variable("ALLOW_ORIGINS") or "").strip()

@@ -12,6 +12,7 @@ from ..mw_utils.session import (
 )
 from ..mw_utils.env import get_env_variable
 from ..mw_utils.http_client import DEFAULT_HEADERS
+from ..mw_utils.limiter import limiter, LOGIN_RATE_LIMIT
 
 logger = logging.getLogger("moodleware.secure_auth")
 router = APIRouter(prefix="/secure", tags=["Secure Authentication"])
@@ -41,7 +42,8 @@ def _normalize_moodle_url(url: str) -> str:
 
 
 @router.post("/login", response_model=LoginResponse)
-async def secure_login(login_data: LoginRequest, response: Response):
+@limiter.limit(LOGIN_RATE_LIMIT)
+async def secure_login(request: Request, login_data: LoginRequest, response: Response):
     moodle_url = _normalize_moodle_url(
         login_data.moodle_url or get_env_variable("MOODLE_URL") or "https://moodle.example.com"
     )

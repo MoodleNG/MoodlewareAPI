@@ -6,3 +6,4 @@ colorlog
 python-dotenv
 itsdangerous
 redis>=5.0.0
+slowapi
